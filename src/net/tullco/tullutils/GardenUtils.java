@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -41,7 +40,7 @@ public class GardenUtils {
 			String keysResponse = NetworkUtils.getDataFromConnection(conn);
 			
 			JSONObject keysResponseJson = new JSONObject(keysResponse);
-			//System.out.println(keysResponseJson);
+
 			return keysResponseJson;
 		}catch(MalformedURLException e){
 			return null;
