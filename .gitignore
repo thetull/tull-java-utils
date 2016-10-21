@@ -2,5 +2,6 @@
 /.settings/
 /.classpath
 /.project
+/bin/
 /*.log
 /src/main/resources/config/config.properties
