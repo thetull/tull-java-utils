@@ -46,7 +46,8 @@ public class GardenUtils {
 			return null;
 		}
 	}
-	public static Connection getPgConnectionFromGarden(String keyring) throws IOException, SQLException {
+	
+	private static Connection getPgConnectionFromGarden(String keyring) throws IOException, SQLException {
 		if(connectionCache.containsKey(keyring) && !connectionCache.get(keyring).isClosed())
 			return connectionCache.get(keyring);
 		JSONObject keys = getKeyring(keyring);
@@ -84,6 +85,14 @@ public class GardenUtils {
 		connectionCache.put(keyring, c);
 		return c;
 	}
+	
+	/**
+	 * Get's a JDBC statement object for the given keyring that you can execute queries against.
+	 * @param keyring The keyring you'd like to query against.
+	 * @return A statement that you can execute queries against.
+	 * @throws SQLException If something goes wrong with the SQL Connection.
+	 * @throws IOException If something goes wrong pulling the data from Garden.
+	 */
 	public static Statement getStatementFromGarden(String keyring) throws SQLException, IOException{
 		return getPgConnectionFromGarden(keyring).createStatement();
 	}
