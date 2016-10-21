@@ -24,17 +24,6 @@ public class GardenUtils {
 	private static final String KEY_LOCATION = "keys?ids=%s";
 	private static final String GARDEN_API_KEY = "UC6VI4759MNH9SHOIVELSUF19LHNCB8TIBHNADQ3052QL5TVPTDG====";
 	
-	public static void main(String[] args) throws IOException, SQLException{
-		ResultSet rs = getStatementFromGarden("uk_prod.application_user_ro").executeQuery("SELECT * FROM loans LIMIT 10");
-		while (rs.next()){
-			System.out.println(rs.getLong("id"));
-		}
-		rs.close();
-		rs = getStatementFromGarden("uk_prod.application_user_ro").executeQuery("SELECT * FROM loans LIMIT 10");
-		while (rs.next()){
-			System.out.println(rs.getLong("amount_cents"));
-		}
-	}
 	private static JSONObject getKeyring(String keyring) throws IOException{
 		try{
 			String keyringURL = String.format(GARDEN_URL+KEYRING_LOCATION,keyring);
