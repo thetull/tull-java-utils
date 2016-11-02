@@ -4,12 +4,16 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 
 import javafx.util.Pair;
+import net.tullco.tullutils.exceptions.InvalidHTTPMethodException;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -20,6 +24,7 @@ public class NetworkUtils {
 	 * The allowed HTTP methods.
 	 */
 	public static final String[] ALLOWED_METHODS = {"PUT","GET","POST","DELETE","HEAD"};
+	public static final HashSet<String> METHOD_SET = new HashSet<String>(Arrays.asList(ALLOWED_METHODS));
 
 	/**
 	 * Sends data to a URL using the method provided, and return the response.
@@ -31,13 +36,14 @@ public class NetworkUtils {
 	 * @return A String containing the response.
 	 * @throws MalformedURLException
 	 * @throws IOException
+	 * @throws InvalidHTTPMethodException If the method given was invalid
 	 */
 	@SafeVarargs
 	public static String sendDataToURL(String url
 			,boolean https
 			,String method
 			,String data
-			,Pair<String,String>... headers) throws MalformedURLException, IOException{
+			,Pair<String,String>... headers) throws MalformedURLException, IOException, InvalidHTTPMethodException{
 		HttpURLConnection conn = getUrlConnection(url,https);
 		conn.setDoOutput(true);
 		for(Pair<String,String> h : headers){
@@ -89,9 +95,15 @@ public class NetworkUtils {
 	 * @return The data at the location as a String.
 	 * @throws MalformedURLException If the URL wasn't valid.
 	 * @throws IOException If something went wrong getting the information.
+	 * @throws InvalidHTTPMethodException 
 	 */
 	@SafeVarargs
-	public static String getDataFromURL(String url, boolean https,String method,Pair<String,String>... headers) throws MalformedURLException, IOException{
+	public static String getDataFromURL(String url
+			,boolean https
+			,String method
+			,Pair<String,String>... headers) throws MalformedURLException, IOException, InvalidHTTPMethodException{
+		if(!METHOD_SET.contains(method))
+			throw new InvalidHTTPMethodException(method+ " is not a supported method.");
 		HttpURLConnection conn = getUrlConnection(url,https);
 		for(Pair<String,String> h:headers){
 			conn.setRequestProperty(h.getKey(), h.getValue());
