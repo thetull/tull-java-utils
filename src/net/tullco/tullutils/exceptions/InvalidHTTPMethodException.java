@@ -1,6 +1,6 @@
 package net.tullco.tullutils.exceptions;
 
-public class InvalidHTTPMethodException extends Exception {
+public class InvalidHTTPMethodException extends RuntimeException {
 
 	private static final long serialVersionUID = -6468696276511318406L;
 

@@ -2,17 +2,16 @@ package net.tullco.tullutils;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import javafx.util.Pair;
 
 public class GardenUtils {
 
@@ -21,23 +20,19 @@ public class GardenUtils {
 	private static final String GARDEN_URL = "https://garden2.ds.avant.com/";
 	private static final String KEYRING_LOCATION = "q?model=keyrings&name=e%s";
 	private static final String KEY_LOCATION = "keys?ids=%s";
-	private static final String GARDEN_API_KEY = "UC6VI4759MNH9SHOIVELSUF19LHNCB8TIBHNADQ3052QL5TVPTDG====";
 	
 	private static JSONObject getKeyring(String keyring) throws IOException{
 		try{
+			String apiKey = Configuration.getConfiguration("GARDEN_API_KEY");
 			String keyringURL = String.format(GARDEN_URL+KEYRING_LOCATION,keyring);
-			HttpsURLConnection conn = (HttpsURLConnection) new URL(keyringURL).openConnection();
-			conn.setRequestProperty("Authorization", GARDEN_API_KEY);
-			String keyringResponse = NetworkUtils.getDataFromConnection(conn);
+			String keyringResponse = NetworkUtils.getDataFromURL(keyringURL, true, "GET", new Pair<String,String>("Authorization",apiKey));
 			
 			JSONObject keyringResponseJson = new JSONObject(keyringResponse);
 			JSONArray keyIds = keyringResponseJson.getJSONArray("result").getJSONObject(0).getJSONArray("keys");
 			String keyIdString = keyIds.toString().replace("[", "").replace("]", "");
 	
 			String keyURL = String.format(GARDEN_URL+KEY_LOCATION,keyIdString);
-			conn = (HttpsURLConnection) new URL(keyURL).openConnection();
-			conn.setRequestProperty("Authorization", GARDEN_API_KEY);
-			String keysResponse = NetworkUtils.getDataFromConnection(conn);
+			String keysResponse = NetworkUtils.getDataFromURL(keyURL, true, "GET", new Pair<String,String>("Authorization",apiKey));
 			
 			JSONObject keysResponseJson = new JSONObject(keysResponse);
 
@@ -46,7 +41,6 @@ public class GardenUtils {
 			return null;
 		}
 	}
-	
 	private static Connection getPgConnectionFromGarden(String keyring) throws IOException, SQLException {
 		if(connectionCache.containsKey(keyring) && !connectionCache.get(keyring).isClosed())
 			return connectionCache.get(keyring);

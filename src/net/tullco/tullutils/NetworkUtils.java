@@ -95,7 +95,7 @@ public class NetworkUtils {
 	 * @return The data at the location as a String.
 	 * @throws MalformedURLException If the URL wasn't valid.
 	 * @throws IOException If something went wrong getting the information.
-	 * @throws InvalidHTTPMethodException 
+	 * @throws InvalidHTTPMethodException If the method given was invalid
 	 */
 	@SafeVarargs
 	public static String getDataFromURL(String url
