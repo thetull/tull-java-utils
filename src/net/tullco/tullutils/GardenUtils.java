@@ -5,13 +5,13 @@ import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javafx.util.Pair;
+import net.tullco.tullutils.exceptions.UnconfiguredException;
 
 public class GardenUtils {
 
@@ -21,7 +21,7 @@ public class GardenUtils {
 	private static final String KEYRING_LOCATION = "q?model=keyrings&name=e%s";
 	private static final String KEY_LOCATION = "keys?ids=%s";
 	
-	private static JSONObject getKeyring(String keyring) throws IOException{
+	private static JSONObject getKeyring(String keyring) throws IOException,UnconfiguredException{
 		try{
 			String apiKey = Configuration.getConfiguration("GARDEN_API_KEY");
 			String keyringURL = String.format(GARDEN_URL+KEYRING_LOCATION,keyring);
@@ -41,7 +41,16 @@ public class GardenUtils {
 			return null;
 		}
 	}
-	private static Connection getPgConnectionFromGarden(String keyring) throws IOException, SQLException {
+	
+	/**
+	 * Gets a JDBC Connection object for a garden keyring. Currently only postgres connections are supported.
+	 * @param keyring The name of the keyring of the given resource.
+	 * @return A connection to the given resource
+	 * @throws IOException If a network problem happens
+	 * @throws SQLException If an SQL problem happens
+	 * @throws UnconfiguredException If the value GARDEN_API_KEY is not configured in the Util configuration class.
+	 */
+	public static Connection getPgConnectionFromGarden(String keyring) throws IOException, SQLException, UnconfiguredException {
 		if(connectionCache.containsKey(keyring) && !connectionCache.get(keyring).isClosed())
 			return connectionCache.get(keyring);
 		JSONObject keys = getKeyring(keyring);
@@ -78,16 +87,5 @@ public class GardenUtils {
 		Connection c = DriverManager.getConnection(jdbcURL, username, password);
 		connectionCache.put(keyring, c);
 		return c;
-	}
-	
-	/**
-	 * Get's a JDBC statement object for the given keyring that you can execute queries against.
-	 * @param keyring The keyring you'd like to query against.
-	 * @return A statement that you can execute queries against.
-	 * @throws SQLException If something goes wrong with the SQL Connection.
-	 * @throws IOException If something goes wrong pulling the data from Garden.
-	 */
-	public static Statement getStatementFromGarden(String keyring) throws SQLException, IOException{
-		return getPgConnectionFromGarden(keyring).createStatement();
 	}
 }
