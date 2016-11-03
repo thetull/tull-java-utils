@@ -7,10 +7,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javafx.util.Pair;
 import net.tullco.tullutils.exceptions.UnconfiguredException;
 
 public class GardenUtils {
@@ -25,14 +25,14 @@ public class GardenUtils {
 		try{
 			String apiKey = Configuration.getConfiguration("GARDEN_API_KEY");
 			String keyringURL = String.format(GARDEN_URL+KEYRING_LOCATION,keyring);
-			String keyringResponse = NetworkUtils.getDataFromURL(keyringURL, true, "GET", new Pair<String,String>("Authorization",apiKey));
+			String keyringResponse = NetworkUtils.getDataFromURL(keyringURL, true, "GET", new ImmutablePair<String,String>("Authorization",apiKey));
 			
 			JSONObject keyringResponseJson = new JSONObject(keyringResponse);
 			JSONArray keyIds = keyringResponseJson.getJSONArray("result").getJSONObject(0).getJSONArray("keys");
 			String keyIdString = keyIds.toString().replace("[", "").replace("]", "");
 	
 			String keyURL = String.format(GARDEN_URL+KEY_LOCATION,keyIdString);
-			String keysResponse = NetworkUtils.getDataFromURL(keyURL, true, "GET", new Pair<String,String>("Authorization",apiKey));
+			String keysResponse = NetworkUtils.getDataFromURL(keyURL, true, "GET", new ImmutablePair<String,String>("Authorization",apiKey));
 			
 			JSONObject keysResponseJson = new JSONObject(keysResponse);
 

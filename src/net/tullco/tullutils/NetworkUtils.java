@@ -3,7 +3,6 @@ package net.tullco.tullutils;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 
-import javafx.util.Pair;
 import net.tullco.tullutils.exceptions.InvalidHTTPMethodException;
 
 import java.io.IOException;
@@ -16,6 +15,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 
 public class NetworkUtils {
