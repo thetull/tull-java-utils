@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class SQLUtil {
 
-	private Connection conn;
+	private final Connection conn;
 	private boolean isClosed=false;
 	
 	public SQLUtil(Connection conn){

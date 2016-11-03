@@ -19,7 +19,7 @@ import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.lang3.tuple.Pair;
 
 
-public class NetworkUtils {
+public final class NetworkUtils {
 
 	/**
 	 * The allowed HTTP methods.
@@ -40,7 +40,7 @@ public class NetworkUtils {
 	 * @throws InvalidHTTPMethodException If the method given was invalid
 	 */
 	@SafeVarargs
-	public static String sendDataToURL(String url
+	public final static String sendDataToURL(String url
 			,boolean https
 			,String method
 			,String data
@@ -61,7 +61,7 @@ public class NetworkUtils {
 	 * @return The String response.
 	 * @throws IOException
 	 */
-	public static String sendDataToConnection(HttpURLConnection conn,String data) throws IOException{
+	public final static String sendDataToConnection(HttpURLConnection conn,String data) throws IOException{
 		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
 		wr.writeBytes(data);
 		wr.flush();
@@ -76,7 +76,7 @@ public class NetworkUtils {
 	 * @throws UnsupportedEncodingException If the UTF-8 encoding is not supported.
 	 * @throws IOException If an exception occurred getting the data.
 	 */
-	public static String getDataFromConnection(HttpURLConnection conn) throws UnsupportedEncodingException, IOException{
+	public final static String getDataFromConnection(HttpURLConnection conn) throws UnsupportedEncodingException, IOException{
 		BufferedReader reader=new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 		String line;
 		String data="";
@@ -99,7 +99,7 @@ public class NetworkUtils {
 	 * @throws InvalidHTTPMethodException If the method given was invalid
 	 */
 	@SafeVarargs
-	public static String getDataFromURL(String url
+	public final static String getDataFromURL(String url
 			,boolean https
 			,String method
 			,Pair<String,String>... headers) throws MalformedURLException, IOException, InvalidHTTPMethodException{
@@ -121,7 +121,7 @@ public class NetworkUtils {
 	 * @throws MalformedURLException If the URL is not well formed.
 	 * @throws IOException If a communication error occurs.
 	 */
-	public static HttpURLConnection getUrlConnection(String url, boolean https) throws MalformedURLException, IOException{
+	public final static HttpURLConnection getUrlConnection(String url, boolean https) throws MalformedURLException, IOException{
 		HttpURLConnection conn;
 		if(https)
 			conn = (HttpsURLConnection) new URL(url).openConnection();
@@ -139,7 +139,7 @@ public class NetworkUtils {
 	 * @throws MalformedURLException If the URL is not well formed.
 	 * @throws IOException If a communication error occurs.
 	 */
-	public static HttpURLConnection getUrlConnection(String url) throws MalformedURLException, IOException{
+	public final static HttpURLConnection getUrlConnection(String url) throws MalformedURLException, IOException{
 		if(url.startsWith("https://"))
 			return getUrlConnection(url,true);
 		else

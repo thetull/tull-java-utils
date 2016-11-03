@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 import net.tullco.tullutils.exceptions.UnconfiguredException;
 
-public class GardenUtils {
+public final class GardenUtils {
 
 	private static HashMap<String,Connection> connectionCache = new HashMap<String,Connection>();
 	
@@ -21,7 +21,7 @@ public class GardenUtils {
 	private static final String KEYRING_LOCATION = "q?model=keyrings&name=e%s";
 	private static final String KEY_LOCATION = "keys?ids=%s";
 	
-	private static JSONObject getKeyring(String keyring) throws IOException,UnconfiguredException{
+	private final static JSONObject getKeyring(String keyring) throws IOException,UnconfiguredException{
 		try{
 			String apiKey = Configuration.getConfiguration("GARDEN_API_KEY");
 			String keyringURL = String.format(GARDEN_URL+KEYRING_LOCATION,keyring);
@@ -44,13 +44,14 @@ public class GardenUtils {
 	
 	/**
 	 * Gets a JDBC Connection object for a garden keyring. Currently only postgres connections are supported.
+	 * To use this, you'll need to set the configuration value for GARDEN_API_KEY.
 	 * @param keyring The name of the keyring of the given resource.
 	 * @return A connection to the given resource
 	 * @throws IOException If a network problem happens
 	 * @throws SQLException If an SQL problem happens
 	 * @throws UnconfiguredException If the value GARDEN_API_KEY is not configured in the Util configuration class.
 	 */
-	public static Connection getPgConnectionFromGarden(String keyring) throws IOException, SQLException, UnconfiguredException {
+	public final static Connection getPgConnectionFromGarden(String keyring) throws IOException, SQLException, UnconfiguredException {
 		if(connectionCache.containsKey(keyring) && !connectionCache.get(keyring).isClosed())
 			return connectionCache.get(keyring);
 		JSONObject keys = getKeyring(keyring);
