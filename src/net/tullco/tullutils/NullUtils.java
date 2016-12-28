@@ -6,12 +6,12 @@ package net.tullco.tullutils;
  */
 public final class NullUtils {
 
+	@SafeVarargs
 	/**
 	 * Returns the first non-null argument that is passed to it.
 	 * @param objects The objects that you want the first non-null of.
 	 * @return The first non-null object from the arguments.
 	 */
-	@SafeVarargs
 	public final static <T> T coalesce(T... objects){
 		for (int i=0;i<objects.length;i++){
 			if(objects[i]!=null)
