@@ -36,8 +36,8 @@ public final class NetworkUtils {
 	 * @param headers JavaFX key value pairs of headers.
 	 * @return A String containing the response.
 	 * @throws MalformedURLException
-	 * @throws IOException
-	 * @throws InvalidHTTPMethodException If the method given was invalid
+	 * @throws IOException If a network exception occurred when sending the data
+	 * @throws InvalidHTTPMethodException If the HTTP method given was invalid
 	 */
 	@SafeVarargs
 	public final static String sendDataToURL(String url
@@ -59,7 +59,7 @@ public final class NetworkUtils {
 	 * @param conn The connection to send the data across.
 	 * @param data The data to send.
 	 * @return The String response.
-	 * @throws IOException
+	 * @throws IOException If a network exception occurred when sending the data
 	 */
 	public final static String sendDataToConnection(HttpURLConnection conn,String data) throws IOException{
 		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());

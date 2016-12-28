@@ -118,7 +118,7 @@ public final class FileUtils {
 	 * Gets a file as a string.
 	 * @param s The path to the file.
 	 * @return A String containing the data in the file.
-	 * @throws IOException
+	 * @throws IOException If something goes very wrong.
 	 */
 	public static String getFileAsString(String s) throws IOException {
 		String contents = new String(Files.readAllBytes(Paths.get(s)));
@@ -128,7 +128,7 @@ public final class FileUtils {
 	 * Gets a file as a string.
 	 * @param f The file.
 	 * @return A String containing the data in the file.
-	 * @throws IOException
+	 * @throws IOException If something goes very wrong.
 	 */
 	public static String getFileAsString(File f) throws IOException {
 		String path = f.getAbsolutePath();
@@ -139,7 +139,7 @@ public final class FileUtils {
 	 * Writes a string to the given file
 	 * @param s The string to write
 	 * @param f The File to write to.
-	 * @throws IOException
+	 * @throws IOException If something goes very wrong.
 	 */
 	public static void writeStringToFile(String s, File f) throws IOException {
 		BufferedWriter writer = new BufferedWriter(getFileWriter(f));
@@ -150,8 +150,8 @@ public final class FileUtils {
 	/**
 	 * Writes a string to the file at the given path.
 	 * @param s The string to write
-	 * @param f The path to the file you want to write to.
-	 * @throws IOException
+	 * @param filePath The path to the file you want to write to.
+	 * @throws IOException If something goes very wrong.
 	 */
 	public static void writeStringToFile(String s, String filePath) throws IOException {
 		File f = new File(filePath);

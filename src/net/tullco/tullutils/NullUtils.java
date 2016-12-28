@@ -9,6 +9,7 @@ public final class NullUtils {
 	@SafeVarargs
 	/**
 	 * Returns the first non-null argument that is passed to it.
+	 * @param <T> The type parameter. Don't mix types unless you want unpredictable results. :)
 	 * @param objects The objects that you want the first non-null of.
 	 * @return The first non-null object from the arguments.
 	 */
