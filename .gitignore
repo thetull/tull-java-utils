@@ -5,3 +5,4 @@
 /bin/
 /*.log
 /src/main/resources/config/config.properties
+/src/Runner.java
