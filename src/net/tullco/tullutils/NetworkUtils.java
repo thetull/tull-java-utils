@@ -11,8 +11,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -24,14 +22,19 @@ public final class NetworkUtils {
 	/**
 	 * The allowed HTTP methods.
 	 */
-	public static final String[] ALLOWED_METHODS = {"PUT","GET","POST","DELETE","HEAD"};
-	public static final HashSet<String> METHOD_SET = new HashSet<String>(Arrays.asList(ALLOWED_METHODS));
+
+	private static enum HttpMethods {PUT, GET, POST, DELETE, HEAD};
+	public static final HttpMethods PUT = HttpMethods.PUT;
+	public static final HttpMethods GET = HttpMethods.GET;
+	public static final HttpMethods POST = HttpMethods.POST;
+	public static final HttpMethods DELETE = HttpMethods.DELETE;
+	public static final HttpMethods HEAD = HttpMethods.HEAD;
 
 	/**
 	 * Sends data to a URL using the method provided, and return the response.
 	 * @param url The URL to connect to.
 	 * @param https True if https. False if http.
-	 * @param method Probably either post or put here.
+	 * @param method Use NetworkUtils.PUT/GET/POST/DELETE/HEAD for your use case.
 	 * @param data The data to send.
 	 * @param headers JavaFX key value pairs of headers.
 	 * @return A String containing the response.
@@ -42,7 +45,7 @@ public final class NetworkUtils {
 	@SafeVarargs
 	public final static String sendDataToURL(String url
 			,boolean https
-			,String method
+			,HttpMethods method
 			,String data
 			,Pair<String,String>... headers) throws MalformedURLException, IOException, InvalidHTTPMethodException{
 		HttpURLConnection conn = getUrlConnection(url,https);
@@ -50,7 +53,7 @@ public final class NetworkUtils {
 		for(Pair<String,String> h : headers){
 			conn.setRequestProperty(h.getKey(), h.getValue());
 		}
-		conn.setRequestMethod(method);
+		conn.setRequestMethod(httpMethodToString(method));
 		return sendDataToConnection(conn,data);
 	}
 	
@@ -82,6 +85,7 @@ public final class NetworkUtils {
 		String data="";
 		while((line=reader.readLine())!=null){
 			data+=line;
+			data+="\n";
 		}
 		reader.close();
 		return data;
@@ -91,7 +95,7 @@ public final class NetworkUtils {
 	 * Gets the data at the URL using http or https.
 	 * @param url The String representing the location of the resource you're trying to get.
 	 * @param https True if this is an https connection. False if this is an http connection.
-	 * @param method The HTTP method to use in this connection. Valid options include GET, HEAD, POST, PUT, and DELETE.
+	 * @param method Use NetworkUtils.PUT/GET/POST/DELETE/HEAD for your use case.
 	 * @param headers A JavaFx pairs that will be the headers.
 	 * @return The data at the location as a String.
 	 * @throws MalformedURLException If the URL wasn't valid.
@@ -101,15 +105,13 @@ public final class NetworkUtils {
 	@SafeVarargs
 	public final static String getDataFromURL(String url
 			,boolean https
-			,String method
+			,HttpMethods method
 			,Pair<String,String>... headers) throws MalformedURLException, IOException, InvalidHTTPMethodException{
-		if(!METHOD_SET.contains(method))
-			throw new InvalidHTTPMethodException(method+ " is not a supported method.");
 		HttpURLConnection conn = getUrlConnection(url,https);
 		for(Pair<String,String> h:headers){
 			conn.setRequestProperty(h.getKey(), h.getValue());
 		}
-		conn.setRequestMethod(method);
+		conn.setRequestMethod(httpMethodToString(method));
 		return getDataFromConnection(conn);
 	}
 	
@@ -144,5 +146,22 @@ public final class NetworkUtils {
 			return getUrlConnection(url,true);
 		else
 			return getUrlConnection(url,false);
+	}
+	private final static String httpMethodToString(HttpMethods hm){
+		switch (hm){
+			case PUT:
+				return "PUT";
+			case GET:
+				return "GET";
+			case POST:
+				return "POST";
+			case DELETE:
+				return "DELETE";
+			case HEAD:
+				return "HEAD";
+			default:
+				return "GET";
+		}
+		
 	}
 }
