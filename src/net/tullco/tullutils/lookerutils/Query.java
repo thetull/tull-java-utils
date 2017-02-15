@@ -88,7 +88,6 @@ public class Query implements Closeable {
 	 * Gets the results of the query in a JSON format. Each row of output is put into an item in a list of JSON Objects in the order they were retrieved.
 	 * @return A list of JSON results
 	 * @throws LookerException If there was a problem getting the results
-	 * @throws IOException If the object is closed.
 	 */
 	public List<JSONObject> getJSONResults() throws LookerException {
 		throwIfClosed();
@@ -108,7 +107,7 @@ public class Query implements Closeable {
 	 * The file will be deleted at the conclusion of the program, so be sure to copy it somewhere else if you want it to persist.
 	 * @return A File object pointing to a file containing the results in CSV format.
 	 * @throws LookerException If there is a problem with Looker
-	 * @throws IOException If there is a problem creating the file.
+	 * @throws IOException If there is a problem creating or writing to the file.
 	 */
 	public File getCSVResults() throws LookerException, IOException{
 		throwIfClosed();
@@ -145,7 +144,7 @@ public class Query implements Closeable {
 	}
 	/**
 	 * Sets the view for the query.
-	 * @param sort The view
+	 * @param view The view
 	 */
 	public void setView(String view){
 		this.view=view;
@@ -177,7 +176,8 @@ public class Query implements Closeable {
 	}
 	/**
 	 * Adds a sort to the look. Should be in the form "view.field".
-	 * @param sort The field to sort by
+	 * @param filter The field you are filtering by
+	 * @param value The value you are filtering the field to
 	 */
 	public void addFilter(String filter,String value){
 		filters.put(filter, value);

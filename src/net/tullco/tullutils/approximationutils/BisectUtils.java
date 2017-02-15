@@ -2,21 +2,21 @@ package net.tullco.tullutils.approximationutils;
 
 import net.tullco.tullutils.exceptions.UnapproximatableException;
 
-/**
- * Recursively approximates an x value that will equal goal when put through the given function.
- * Only works for functions that have strict positive or negative relationships.
- * Function must increase or decrease reliably with it's argument. Otherwise, you're likely to get unexpected results. 
- * @param goal The value you want the function to have for the x value you are searching for.
- * @param initial The value you want the approximation to start from.
- * @param startStep The original step size you want to take. Will also define the size of your bisect range and how much seeking will be done. 
- * @param precision How close your final answer needs to be to the goal. Smaller numbers take longer.
- * @param function The function to be tested. A class or lambda that implements the Approximatable interface. 
- * @throws UnapproximatableException If, for whatever reason, an approximation with adequate precision cannot be reached, this will be thrown. 
- * @return The requested root of the approximatable function.
- */
+
 public class BisectUtils {
-	public static int MAX_RECURSION_DEPTH = 2;
-	
+	private static int MAX_RECURSION_DEPTH = 500;
+	/**
+	 * Recursively approximates an x value that will equal goal when put through the given function.
+	 * Only works for functions that have strict positive or negative relationships.
+	 * Function must increase or decrease reliably with it's argument. Otherwise, you're likely to get unexpected results. 
+	 * @param goal The value you want the function to have for the x value you are searching for.
+	 * @param initial The value you want the approximation to start from.
+	 * @param startStep The original step size you want to take. Will also define the size of your bisect range and how much seeking will be done. 
+	 * @param precision How close your final answer needs to be to the goal. Smaller numbers take longer.
+	 * @param function The function to be tested. A class or lambda that implements the Approximatable interface. 
+	 * @throws UnapproximatableException If, for whatever reason, an approximation with adequate precision cannot be reached, this will be thrown. 
+	 * @return The requested root of the approximatable function.
+	 */	
 	public static double bisectApproximate(
 			double goal,
 			double initial,
