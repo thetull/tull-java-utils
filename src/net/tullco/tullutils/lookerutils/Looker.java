@@ -19,23 +19,48 @@ public class Looker implements Closeable {
 	
 	private boolean closed;
 	
+	/**
+	 * Constructs a looker API connection from environment variables or the configuration class.
+	 * @throws UnconfiguredException If there are no values for LOOKER_CLIENT_ID, LOOKER_CLIENT_SECRET, or LOOKER_API_ENDPOINT in either the configuration class or the environment variables
+	 * @throws LookerException If the provided details don't allow the API to authenticate.
+	 */
 	public Looker() throws UnconfiguredException, LookerException {
 		this.clientId=Configuration.getConfiguration("LOOKER_CLIENT_ID");
 		this.clientSecret=Configuration.getConfiguration("LOOKER_CLIENT_SECRET");
 		this.endpointLocation = Configuration.getConfiguration("LOOKER_API_ENDPOINT");
 		init();
 	}
+	/**
+	 * Constructs a looker API connection from environment variables and the provided endpoint.
+	 * @param endpointLocation The URL to the Looker endpoint.
+	 * @throws UnconfiguredException If there are no values for LOOKER_CLIENT_ID or LOOKER_CLIENT_SECRET in either the configuration class or the environment variables
+	 * @throws LookerException If the provided details don't allow the API to authenticate.
+	 */
 	public Looker(String endpointLocation) throws UnconfiguredException, LookerException {
 		this.clientId=Configuration.getConfiguration("LOOKER_CLIENT_ID");
 		this.clientSecret=Configuration.getConfiguration("LOOKER_CLIENT_SECRET");
 		this.endpointLocation = endpointLocation;
 	}
+	/**
+	 * Constructs a looker API connection from environment variables and the provided credentials.
+	 * @param clientId The client ID for authentication to the API.
+	 * @param clientSecret The client secret for authentication to the API.
+	 * @throws UnconfiguredException If there is no value for LOOKER_API_ENDPOINT in either the configuration class or the environment variables
+	 * @throws LookerException If the provided details don't allow the API to authenticate.
+	 */
 	public Looker(String clientId, String clientSecret) throws UnconfiguredException,LookerException {
 		this.clientId=clientId;
 		this.clientSecret=clientSecret;
 		this.endpointLocation = Configuration.getConfiguration("LOOKER_API_ENDPOINT");
 		init();
 	}
+	/**
+	 * Constructs a looker API connection from environment variables and the provided credentials.
+	 * @param clientId The client ID for authentication to the API.
+	 * @param clientSecret The client secret for authentication to the API.
+	 * @param endpointLocation The endpoint location for the API.
+	 * @throws LookerException If the provided details don't allow the API to authenticate.
+	 */
 	public Looker(String clientId, String clientSecret, String endpointLocation) throws LookerException {
 		this.clientId=clientId;
 		this.clientSecret=clientSecret;
@@ -48,27 +73,46 @@ public class Looker implements Closeable {
 		this.queries = new ArrayList<Query>();
 		this.getAccessToken();
 	}
-	
-	public Query newQuery() throws IOException, LookerException{
+	/**
+	 * Gets a new, empty query against the looker API defined by the object.
+	 * @return A new, empty query.
+	 * @throws LookerException If the object is closed.
+	 */
+	public Query newQuery() throws LookerException{
 		throwIfClosed();
 		Query q = new Query(this.getAccessToken(),this.endpointLocation);
 		q.setLimit(500);
 		return q;
 	}
-	public Query getQueryBySlug(String slug) throws IOException{
+	/**
+	 * Fetches the query matching the specified slug from the API.
+	 * @param slug The slug corresponding to the desired query.
+	 * @return The query matching the specified slug.
+	 * @throws LookerException If the object is closed.
+	 * @throws IOException 
+	 * @throws  
+	 */
+	public Query getQueryBySlug(String slug) throws LookerException, IOException{
 		throwIfClosed();
 		for (Query q: queries){
 			if(q.getSlug().equals(slug))
 				return q;
 		}
-		return null;
+		return Query.getQueryBySlug(this.getAccessToken(), this.endpointLocation, slug);
 	}
-	public Query getQueryById(int id) throws IOException{
+	/**
+	 * Doesn't actually work properly yet. DO NOT USE! Fetches the query matching the specified id from the API. 
+	 * @param slug The id corresponding to the desired query.
+	 * @return The query matching the specified id.
+	 * @throws LookerException If the object is closed.
+	 * @throws IOException 
+	 */
+	public Query getQueryById(int id) throws LookerException {
 		throwIfClosed();
 		for (Query q: queries){
 			return q;
 		}
-		return null;
+		return Query.getQueryById(this.getAccessToken(), this.endpointLocation, id);
 	}
 	
 	protected String getAccessToken() throws LookerException {
@@ -80,15 +124,18 @@ public class Looker implements Closeable {
 	}
 	@Override
 	public void close() throws IOException {
+		this.closed=false;
+		for (Query q: this.queries){
+			q.close();
+		}
 		try{
 			this.auth.logout();
 		}catch(LookerException e){
 			throw new IOException(e);
 		}
-		this.closed=false;
 	}
-	private void throwIfClosed() throws IOException {
+	private void throwIfClosed() throws LookerException {
 		if (this.closed)
-			throw new IOException("LookerAPI closed. Please instatiate a new API.");
+			throw new LookerException("LookerAPI closed. Please instatiate a new API.");
 	}
 }

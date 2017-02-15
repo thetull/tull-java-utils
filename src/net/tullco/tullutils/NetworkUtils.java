@@ -3,8 +3,6 @@ package net.tullco.tullutils;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 
-import net.tullco.tullutils.exceptions.InvalidHTTPMethodException;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -47,7 +45,7 @@ public final class NetworkUtils {
 			,boolean https
 			,HttpMethods method
 			,String data
-			,Pair<String,String>... headers) throws MalformedURLException, IOException, InvalidHTTPMethodException{
+			,Pair<String,String>... headers) throws MalformedURLException, IOException {
 		HttpURLConnection conn = getUrlConnection(url,https);
 		conn.setDoOutput(true);
 		for(Pair<String,String> h : headers){
@@ -106,7 +104,7 @@ public final class NetworkUtils {
 	public final static String getDataFromURL(String url
 			,boolean https
 			,HttpMethods method
-			,Pair<String,String>... headers) throws MalformedURLException, IOException, InvalidHTTPMethodException{
+			,Pair<String,String>... headers) throws MalformedURLException, IOException {
 		HttpURLConnection conn = getUrlConnection(url,https);
 		for(Pair<String,String> h:headers){
 			conn.setRequestProperty(h.getKey(), h.getValue());

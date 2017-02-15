@@ -12,7 +12,7 @@ import net.tullco.tullutils.exceptions.UnapproximatableException;
  * @param precision How close your final answer needs to be to the goal. Smaller numbers take longer.
  * @param function The function to be tested. A class or lambda that implements the Approximatable interface. 
  * @throws UnapproximatableException If, for whatever reason, an approximation with adequate precision cannot be reached, this will be thrown. 
- * @return
+ * @return The requested root of the approximatable function.
  */
 public class BisectUtils {
 	public static int MAX_RECURSION_DEPTH = 2;
