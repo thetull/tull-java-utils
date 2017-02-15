@@ -89,10 +89,8 @@ public class Looker implements Closeable {
 	 * @param slug The slug corresponding to the desired query.
 	 * @return The query matching the specified slug.
 	 * @throws LookerException If the object is closed.
-	 * @throws IOException 
-	 * @throws  
 	 */
-	public Query getQueryBySlug(String slug) throws LookerException, IOException{
+	public Query getQueryBySlug(String slug) throws LookerException {
 		throwIfClosed();
 		for (Query q: queries){
 			if(q.getSlug().equals(slug))
@@ -102,10 +100,9 @@ public class Looker implements Closeable {
 	}
 	/**
 	 * Doesn't actually work properly yet. DO NOT USE! Fetches the query matching the specified id from the API. 
-	 * @param slug The id corresponding to the desired query.
+	 * @param id The id corresponding to the desired query.
 	 * @return The query matching the specified id.
 	 * @throws LookerException If the object is closed.
-	 * @throws IOException 
 	 */
 	public Query getQueryById(int id) throws LookerException {
 		throwIfClosed();
