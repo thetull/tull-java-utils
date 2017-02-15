@@ -82,7 +82,7 @@ public class BisectUtils {
 	private static double bisectApproximator(double upperBound, double lowerBound, double goal, double precision,boolean direction ,int depth,Approximatable function) throws UnapproximatableException{
 		//System.out.println(String.format(Locale.US,"Attempt: %d Upper bound: %2$,.2f Lower Bound: %3$,.2f", depth, upperBound,lowerBound));
 		//Don't go any deeper, Leo! O:)
-		if(depth > 100)
+		if(depth > MAX_RECURSION_DEPTH)
 			throw new UnapproximatableException();
 		
 		double pivot = (upperBound+lowerBound)/2;
