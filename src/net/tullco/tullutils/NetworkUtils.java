@@ -38,7 +38,6 @@ public final class NetworkUtils {
 	 * @return A String containing the response.
 	 * @throws MalformedURLException
 	 * @throws IOException If a network exception occurred when sending the data
-	 * @throws InvalidHTTPMethodException If the HTTP method given was invalid
 	 */
 	@SafeVarargs
 	public final static String sendDataToURL(String url
@@ -98,7 +97,6 @@ public final class NetworkUtils {
 	 * @return The data at the location as a String.
 	 * @throws MalformedURLException If the URL wasn't valid.
 	 * @throws IOException If something went wrong getting the information.
-	 * @throws InvalidHTTPMethodException If the method given was invalid
 	 */
 	@SafeVarargs
 	public final static String getDataFromURL(String url
