@@ -36,7 +36,7 @@ public final class NetworkUtils {
 	 * @param data The data to send.
 	 * @param headers JavaFX key value pairs of headers.
 	 * @return A String containing the response.
-	 * @throws MalformedURLException
+	 * @throws MalformedURLException Throws if the URL is invalid
 	 * @throws IOException If a network exception occurred when sending the data
 	 */
 	@SafeVarargs

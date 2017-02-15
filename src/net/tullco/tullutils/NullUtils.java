@@ -23,6 +23,7 @@ public final class NullUtils {
 	/**
 	 * Returns null if the two arguments are equal according to base.equals(comparator).
 	 * Otherwise returns the base object
+	 * @param <T> The type parameter.
 	 * @param base The object to compare
 	 * @param comparator The object to compare to.
 	 * @return Either the base object, or null if the comparator is equal to the base.
