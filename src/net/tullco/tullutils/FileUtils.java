@@ -38,13 +38,12 @@ public final class FileUtils {
 	 */
 	public static FileWriter getFileWriter(File f) throws IOException{
 		FileWriter fw=null;
-		boolean succeeded=false;
-		while(!succeeded){
+		while(true){
 			try{
 				fw=new FileWriter(f);
-				succeeded=true;
+				break;
 			}catch(FileNotFoundException e){
-				System.out.println("Could not open for writing. Trying again...");
+				System.out.println("Could not open for writing. Trying again in 5 seconds...");
 			}
 			try{
 				Thread.sleep(5000);
