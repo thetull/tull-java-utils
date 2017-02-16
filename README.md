@@ -16,11 +16,13 @@ This library is self-hosted, and not in maven central. To include it, add the fo
     <url>http://tullco.net/maven2</url>
     <layout>default</layout>
   </repository>
-</repositories>```
+</repositories>
+```
 Then you can add the dependancy with the following
 ```xml
 <dependency>
   <groupId>net.tullco</groupId>
   <artifactId>TullUtils</artifactId>
   <version>0.4.1</version>
-</dependency>```
+</dependency>
+```
