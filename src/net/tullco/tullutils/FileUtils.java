@@ -20,12 +20,25 @@ public final class FileUtils {
 	 * potentially blocking execution. This is to give you a chance to fix the
 	 * problem instead of crashing and losing what you were about to write.
 	 * @param s The full path string.
+	 * @param append If set to true, will open the file to append instead of overwrite
+	 * @return A file writer for the path.
+	 * @throws IOException If the path is invalid or a directory.
+	 */
+	public static FileWriter getFileWriter(String s, boolean append) throws IOException {
+		File f = new File(s);
+		return getFileWriter(f,append);
+	}
+	/**
+	 * Gets a File Writer from a string containing the full path.
+	 * If the file writer cannot be accessed for writing, it will continue to try,
+	 * potentially blocking execution. This is to give you a chance to fix the
+	 * problem instead of crashing and losing what you were about to write.
+	 * @param s The full path string.
 	 * @return A file writer for the path.
 	 * @throws IOException If the path is invalid or a directory.
 	 */
 	public static FileWriter getFileWriter(String s) throws IOException{
-		File f = new File(s);
-		return getFileWriter(f);
+		return getFileWriter(s,false);
 	}
 	/**
 	 * Gets a File Writer for a File object
@@ -33,14 +46,15 @@ public final class FileUtils {
 	 * potentially blocking execution. This is to give you a chance to fix the
 	 * problem instead of crashing and losing what you were about to write.
 	 * @param f A file object that you want to write to.
+	 * @param append If set to true, will open the file to append instead of overwrite
 	 * @return A file writer for the path.
 	 * @throws IOException If the path is invalid or a directory.
 	 */
-	public static FileWriter getFileWriter(File f) throws IOException{
+	public static FileWriter getFileWriter(File f, boolean append) throws IOException{
 		FileWriter fw=null;
 		while(true){
 			try{
-				fw=new FileWriter(f);
+				fw=new FileWriter(f, append);
 				break;
 			}catch(FileNotFoundException e){
 				System.out.println("Could not open for writing. Trying again in 5 seconds...");
@@ -52,6 +66,18 @@ public final class FileUtils {
 			}
 		}
 		return fw;
+	}
+	/**
+	 * Gets a File Writer from a string containing the full path.
+	 * If the file writer cannot be accessed for writing, it will continue to try,
+	 * potentially blocking execution. This is to give you a chance to fix the
+	 * problem instead of crashing and losing what you were about to write.
+	 * @param f A file object you want to write to.
+	 * @return A file writer for the path.
+	 * @throws IOException If the path is invalid or a directory.
+	 */
+	public static FileWriter getFileWriter(File f) throws IOException {
+		return getFileWriter(f,false);
 	}
 	/**
 	 * Gets a File Reader for the file at the given string.
@@ -95,11 +121,34 @@ public final class FileUtils {
 	 * Gets a CSVWriter for the file. If it can't get a write lock on the file,
 	 * it will wait until it can.
 	 * @param f The file.
+	 * @param append If this is true, append instead of overwriting.
+	 * @return A CSVWriter to the file.
+	 * @throws IOException If something goes very wrong.
+	 */
+	public static CSVWriter getCSVWriter(File f, boolean append) throws IOException {
+		return new CSVWriter(getFileWriter(f));
+	}
+	/**
+	 * Gets a CSVWriter for the file. If it can't get a write lock on the file,
+	 * it will wait until it can.
+	 * @param f The file.
 	 * @return A CSVWriter to the file.
 	 * @throws IOException If something goes very wrong.
 	 */
 	public static CSVWriter getCSVWriter(File f) throws IOException {
-		return new CSVWriter(getFileWriter(f));
+		return getCSVWriter(f,false);
+	}
+	/**
+	 * Gets a CSVWriter for the file at the given path. If it can't get a write lock on the file,
+	 * it will wait until it can.
+	 * @param s The full path of the file.
+	 * @param append If this is true, append instead of overwriting.
+	 * @return A CSVWriter to the file.
+	 * @throws IOException If something goes very wrong.
+	 */
+	public static CSVWriter getCSVWriter(String s, boolean append) throws IOException {
+		File f = new File(s);
+		return getCSVWriter(f);
 	}
 	/**
 	 * Gets a CSVWriter for the file at the given path. If it can't get a write lock on the file,
@@ -109,10 +158,8 @@ public final class FileUtils {
 	 * @throws IOException If something goes very wrong.
 	 */
 	public static CSVWriter getCSVWriter(String s) throws IOException {
-		File f = new File(s);
-		return getCSVWriter(f);
+		return getCSVWriter(s,false);
 	}
-	
 	/**
 	 * Gets a file as a string.
 	 * @param s The path to the file.
