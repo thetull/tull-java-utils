@@ -2,10 +2,13 @@ package net.tullco.tullutils;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -126,7 +129,7 @@ public final class FileUtils {
 	 * @throws IOException If something goes very wrong.
 	 */
 	public static CSVWriter getCSVWriter(File f, boolean append) throws IOException {
-		return new CSVWriter(getFileWriter(f));
+		return new CSVWriter(getFileWriter(f, append));
 	}
 	/**
 	 * Gets a CSVWriter for the file. If it can't get a write lock on the file,
@@ -148,7 +151,7 @@ public final class FileUtils {
 	 */
 	public static CSVWriter getCSVWriter(String s, boolean append) throws IOException {
 		File f = new File(s);
-		return getCSVWriter(f);
+		return getCSVWriter(f, append);
 	}
 	/**
 	 * Gets a CSVWriter for the file at the given path. If it can't get a write lock on the file,
@@ -202,5 +205,29 @@ public final class FileUtils {
 	public static void writeStringToFile(String s, String filePath) throws IOException {
 		File f = new File(filePath);
 		writeStringToFile(s,f);
+	}
+	/**
+	 * Creates a new copy of the source file at the destination location.
+	 * @param source The location of the original file.
+	 * @param dest The location of the destination file.
+	 * @throws IOException If there is a problem copying the file.
+	 */
+	public static void copyFileUsingChannel(File source, File dest) throws IOException {
+		FileChannel sourceChannel = null;
+		FileChannel destChannel = null;
+		FileInputStream is = null;
+		FileOutputStream os = null;
+		try {
+			is = new FileInputStream(source);
+			sourceChannel = is.getChannel();
+			os = new FileOutputStream(dest);
+			destChannel = os.getChannel();
+			destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+		}finally{
+			is.close();
+			sourceChannel.close();
+			os.close();
+			destChannel.close();
+		}
 	}
 }
