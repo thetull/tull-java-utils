@@ -11,6 +11,11 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import javax.xml.bind.DatatypeConverter;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -183,7 +188,25 @@ public final class FileUtils {
 		String path = f.getAbsolutePath();
 		return getFileAsString(path);
 	}
-	
+	/**
+	 * Gets a file as a byte array. Best for use with binary data.
+	 * @param f The File to get.
+	 * @return A byte array of the contents of the file
+	 * @throws IOException If there was a problem reading the bytes.
+	 */
+	public static byte[] getFileAsBytes(File f) throws IOException {
+		return Files.readAllBytes(Paths.get(f.getAbsolutePath()));
+	}
+	/**
+	 * Gets a file as a byte array. Best for use with binary data.
+	 * @param s The path to the file as a string.
+	 * @return A byte array of the contents of the file
+	 * @throws IOException If there was a problem reading the bytes.
+	 */
+	public static byte[] getFileAsBytes(String s) throws IOException {
+		File f = new File(s);
+		return getFileAsBytes(f);
+	}
 	/**
 	 * Writes a string to the given file
 	 * @param s The string to write
@@ -212,7 +235,7 @@ public final class FileUtils {
 	 * @param dest The location of the destination file.
 	 * @throws IOException If there is a problem copying the file.
 	 */
-	public static void copyFileUsingChannel(File source, File dest) throws IOException {
+	public static void copyFile(File source, File dest) throws IOException {
 		FileChannel sourceChannel = null;
 		FileChannel destChannel = null;
 		FileInputStream is = null;
@@ -229,5 +252,29 @@ public final class FileUtils {
 			os.close();
 			destChannel.close();
 		}
+	}
+	/**
+	 * Generates an md5 hash for the given file. May have problems with gigabyte scale files.
+	 * @param f The file to hash.
+	 * @return A string containing the md5 hash.
+	 * @throws NoSuchAlgorithmException If the MD5 hashing algorithm isn't currently available.
+	 * @throws IOException If there is a problem reading the files.
+	 */
+	public static String md5Hash(File f) throws NoSuchAlgorithmException, IOException{
+		byte[] b = getFileAsBytes(f);
+		byte[] hash = MessageDigest.getInstance("MD5").digest(b);
+		return DatatypeConverter.printHexBinary(hash);
+	}
+	/**
+	 * Compares two files for exact equality. 
+	 * @param f1 The file to compare.
+	 * @param f2 The file to compare against.
+	 * @return True if the files are equal. False otherwise.
+	 * @throws IOException If there is a problem reading the files.
+	 */
+	public static boolean filesEqual(File f1, File f2) throws IOException{
+		byte[] b1 = getFileAsBytes(f1);
+		byte[] b2 = getFileAsBytes(f2);
+		return Arrays.equals(b1, b2);
 	}
 }
