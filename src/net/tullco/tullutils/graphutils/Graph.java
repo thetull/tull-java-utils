@@ -8,6 +8,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.tullco.tullutils.exceptions.GraphException;
 
+/**
+ * This class implements graphs using vertices and edges.
+ * @author Tull Gearreald
+ *
+ */
 public abstract class Graph {
 	
 	private HashMap<String,Vertex> vertices;
@@ -47,6 +52,8 @@ public abstract class Graph {
 	 * @param distance The distance between the two points along this edge.
 	 */
 	public void createEdgeBetween(Vertex origin, Vertex destination, int distance){
+		if (origin.equals(destination))
+			return;
 		Edge e = new Edge(origin,destination,distance);
 		this.addEdge(e);
 	}
@@ -62,24 +69,60 @@ public abstract class Graph {
 	protected HashMap<Vertex,Set<Edge>> getConnections(){
 		return this.connections;
 	}
+	/**
+	 * Gets all the edges in this graph.
+	 * @return A set containing all the edges.
+	 */
 	public Set<Edge> getEdges(){
 		return this.edges;
 	}
+	/**
+	 * Returns the vertex with the given identifier
+	 * @param identifier The identifier of the desired vertex.
+	 * @return The vertex with the given identifier or null if the graph doesn't contain it.
+	 */
 	public Vertex getVertex(String identifier){
 		return this.vertices.get(identifier);
 	}
+	/**
+	 * Checks if the graph contains the vertex with the given identifier.
+	 * @param identifier The identifier of the vertex you are checking for.
+	 * @return Yes if the graph contains the vertex. No otherwise.
+	 */
 	public boolean hasVertex(String identifier){
 		return this.vertices.containsKey(identifier);
 	}
+	/**
+	 * Checks if the graph contains the given vertex.
+	 * @param v The vertex you are checking for.
+	 * @return Yes if the graph contains the vertex. No otherwise.
+	 */
 	public boolean hasVertex(Vertex v){
 		return hasVertex(v.getIdentifier());
 	}
+	/**
+	 * Gets a set of all the edges connected to the vertex with the given identifier.
+	 * The new set is independent of the graph.
+	 * @param identifier The identifier of a vertex.
+	 * @return A set of all the edges connected to the specified vertex. Null if the vertex isn't present.
+	 */
 	public Set<Edge> getVertexEdges(String identifier){
 		Vertex v = this.vertices.get(identifier);
+		if(v==null)
+			return null;
 		return this.getVertexEdges(v);
 	}
+	/**
+	 * Gets a set of all the edges connected to the given vertex.
+	 * The new set is independent of the graph.
+	 * @param v The vertex
+	 * @return A set of all the edges connected to the specified vertex. Null if the vertex isn't present.
+	 */
 	public Set<Edge> getVertexEdges(Vertex v){
-		HashSet<Edge> copy = new HashSet<Edge>(this.connections.get(v));
+		Set<Edge> temp = this.connections.get(v);
+		if (temp==null)
+			return null;
+		HashSet<Edge> copy = new HashSet<Edge>(temp);
 		return copy;
 	}
 	
