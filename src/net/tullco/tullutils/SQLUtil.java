@@ -189,7 +189,7 @@ public class SQLUtil implements Closeable {
 	 */
 	private void throwIfClosed() throws SQLException {
 		if(isClosed)
-			throw new SQLException("This object has already been closed");
+			throw new SQLException("This resource has already been closed");
 	}
 	public void close() {
 		if(isClosed)
