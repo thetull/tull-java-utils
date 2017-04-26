@@ -71,6 +71,54 @@ public class MergeUtils {
 		largeReader.close();
 		writer.close();
 	}
+	/**
+	 * Merges two CSV files together into a new file using the keys at the specified indices.
+	 * 
+	 * The base file will have the non-key columns of the supplement added to the end of it.
+	 * 
+	 * Note that this method will load neither file into memory, but is very heavy on disk access, and is likely to be slow. If you can, use mergeFiles.
+	 * @param supplementCsv The file containing the data to be merged.
+	 * @param baseCsv The file containing the data to merge into.
+	 * @param supplementKeyIndex The index of the merge key in the supplementary file
+	 * @param baseKeyIndex The index of the merge key in base file.
+	 * @param destination The output file for the merged data
+	 * @throws IOException If there was a problem writing the merged file.
+	 * @throws InterruptedException
+	 */
+	public static void mergeFilesSlow(File supplementCsv, File baseCsv, int supplementKeyIndex, int baseKeyIndex, File destination) throws IOException, InterruptedException{
+		//First, load the small file into memory.
+		CSVReader baseReader = FileUtils.getCSVReader(baseCsv);
+		String[] baseHeaders = baseReader.readNext();
+		CSVReader supplementReader = FileUtils.getCSVReader(supplementCsv);
+		String[] supplementHeaders = removeItemFromStringArray(supplementReader.readNext(),supplementKeyIndex);
+		supplementReader.close();
+		String[] outputHeaders = mergeStringArrays(baseHeaders,supplementHeaders);
+		CSVWriter writer = FileUtils.getCSVWriter(destination);
+		writer.writeNext(outputHeaders);
+		String[] baseLine;
+		while ( (baseLine = baseReader.readNext()) != null){
+			String key = baseLine[baseKeyIndex];
+			supplementReader = FileUtils.getCSVReader(supplementCsv);
+			supplementReader.readNext();
+			String[] outputLine = null;
+			String[] supplementLine;
+			//System.out.println(baseReader.getLinesRead());
+			while ( (supplementLine = supplementReader.readNext()) != null){
+				if(supplementLine[supplementKeyIndex].equals(key)){
+					outputLine=mergeStringArrays(baseLine,removeItemFromStringArray(supplementLine,supplementKeyIndex));
+					break;
+				}
+			}
+			supplementReader.close();
+			if(outputLine==null){
+				outputLine=createArrayOfEmptyStrings(supplementHeaders.length);
+			}
+			writer.writeNext(outputLine);
+			writer.flush();
+		}
+		baseReader.close();
+		writer.close();
+	}
 	private static String[] mergeStringArrays(String[] startingArray, String[] mergeArray){
 		if(startingArray==null)
 			return mergeArray;
