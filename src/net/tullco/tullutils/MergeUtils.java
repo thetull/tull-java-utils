@@ -83,10 +83,8 @@ public class MergeUtils {
 	 * @param baseKeyIndex The index of the merge key in base file.
 	 * @param destination The output file for the merged data
 	 * @throws IOException If there was a problem writing the merged file.
-	 * @throws InterruptedException
 	 */
-	public static void mergeFilesSlow(File supplementCsv, File baseCsv, int supplementKeyIndex, int baseKeyIndex, File destination) throws IOException, InterruptedException{
-		//First, load the small file into memory.
+	public static void mergeFilesSlow(File supplementCsv, File baseCsv, int supplementKeyIndex, int baseKeyIndex, File destination) throws IOException {
 		CSVReader baseReader = FileUtils.getCSVReader(baseCsv);
 		String[] baseHeaders = baseReader.readNext();
 		CSVReader supplementReader = FileUtils.getCSVReader(supplementCsv);
@@ -102,7 +100,6 @@ public class MergeUtils {
 			supplementReader.readNext();
 			String[] outputLine = null;
 			String[] supplementLine;
-			//System.out.println(baseReader.getLinesRead());
 			while ( (supplementLine = supplementReader.readNext()) != null){
 				if(supplementLine[supplementKeyIndex].equals(key)){
 					outputLine=mergeStringArrays(baseLine,removeItemFromStringArray(supplementLine,supplementKeyIndex));
