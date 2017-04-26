@@ -14,11 +14,14 @@ import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-
+/**
+ * This is a static class that handles various network tasks, including sending and receiving data.
+ * @author Tull Gearreald
+ */
 public final class NetworkUtils {
 
 	/**
-	 * The allowed HTTP methods.
+	 * The allowed HTTP methods. Currently PUT, GET, POST, DELETE, and HEAD.
 	 */
 
 	private static enum HttpMethods {PUT, GET, POST, DELETE, HEAD};
@@ -93,8 +96,8 @@ public final class NetworkUtils {
 	 * @param url The String representing the location of the resource you're trying to get.
 	 * @param https True if this is an https connection. False if this is an http connection.
 	 * @param method Use NetworkUtils.PUT/GET/POST/DELETE/HEAD for your use case.
-	 * @param headers A JavaFx pairs that will be the headers.
-	 * @return The data at the location as a String.
+	 * @param headers Apache pairs that will be the headers.
+	 * @return The data at the url as a String.
 	 * @throws MalformedURLException If the URL wasn't valid.
 	 * @throws IOException If something went wrong getting the information.
 	 */
@@ -109,6 +112,42 @@ public final class NetworkUtils {
 		}
 		conn.setRequestMethod(httpMethodToString(method));
 		return getDataFromConnection(conn);
+	}
+	
+	/**
+	 * Gets the data at the URL using http or https with retries on IOExceptions
+	 * @param url The String representing the location of the resource you're trying to get.
+	 * @param https True if this is an https connection. False if this is an http connection.
+	 * @param method Use NetworkUtils.PUT/GET/POST/DELETE/HEAD for your use case.
+	 * @param retries The number of times to retry the request.
+	 * @param headers A JavaFx pairs that will be the headers.
+	 * @return The data at the url as a String.
+	 * @throws MalformedURLException If the URL wasn't valid.
+	 * @throws IOException If something went wrong getting the information over all the retries.
+	 */
+	@SafeVarargs
+	public final static String getDataFromURL(String url
+			,boolean https
+			,HttpMethods method
+			,int retries
+			,Pair<String,String>... headers) throws MalformedURLException, IOException {
+		int i=0;
+		while(true){
+			try{
+				getDataFromURL(url,https,method,headers);
+			}catch(IOException e){
+				if(i<retries){
+					try{
+						Thread.sleep(5000);
+					}catch(InterruptedException e2){
+						throw e;
+					}
+				}
+				else{
+					throw e;
+				}
+			}
+		}
 	}
 	
 	/**
