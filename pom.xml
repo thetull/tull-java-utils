@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.tullco</groupId>
   <artifactId>TullUtils</artifactId>
-  <version>0.6</version>
+  <version>0.6.1</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -36,11 +36,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20160212</version>
     </dependency>
   </dependencies>
 </project>
