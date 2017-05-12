@@ -90,7 +90,6 @@ public final class NetworkUtils {
 		reader.close();
 		return data;
 	}
-	
 	/**
 	 * Gets the data at the URL using http or https.
 	 * @param url The String representing the location of the resource you're trying to get.
@@ -134,7 +133,7 @@ public final class NetworkUtils {
 		int i=0;
 		while(true){
 			try{
-				getDataFromURL(url,https,method,headers);
+				return getDataFromURL(url,https,method,headers);
 			}catch(IOException e){
 				if(i<retries){
 					try{
@@ -142,6 +141,7 @@ public final class NetworkUtils {
 					}catch(InterruptedException e2){
 						throw e;
 					}
+					i++;
 				}
 				else{
 					throw e;
