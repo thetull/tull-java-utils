@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -30,6 +31,7 @@ public final class NetworkUtils {
 	public static final HttpMethods POST = HttpMethods.POST;
 	public static final HttpMethods DELETE = HttpMethods.DELETE;
 	public static final HttpMethods HEAD = HttpMethods.HEAD;
+	public static final int DOWNLOAD_BUFFER_SIZE = 4096;
 
 	/**
 	 * Sends data to a URL using the method provided, and return the response.
@@ -56,6 +58,61 @@ public final class NetworkUtils {
 		conn.setRequestMethod(httpMethodToString(method));
 		return sendDataToConnection(conn,data);
 	}
+
+	/**
+	 * Sends a byte array to a URL using the method provided, and return the response.
+	 * @param url The URL to connect to.
+	 * @param https True if https. False if http.
+	 * @param method Use NetworkUtils.PUT/GET/POST/DELETE/HEAD for your use case.
+	 * @param binaryData A byte array containing the data you want to send.
+	 * @param headers JavaFX key value pairs of headers.
+	 * @return A String containing the response.
+	 * @throws MalformedURLException Throws if the URL is invalid
+	 * @throws IOException If a network exception occurred when sending the data
+	 */
+	@SafeVarargs
+	public final static String sendBinaryDataToURL(String url
+			,boolean https
+			,HttpMethods method
+			,byte[] binaryData
+			,Pair<String,String>... headers) throws MalformedURLException, IOException {
+		HttpURLConnection conn = getUrlConnection(url,https);
+		conn.setDoOutput(true);
+		for(Pair<String,String> h : headers){
+			conn.setRequestProperty(h.getKey(), h.getValue());
+		}
+		conn.setRequestMethod(httpMethodToString(method));
+		return sendBinaryDataToConnection(conn, binaryData, binaryData.length);
+	}	
+	
+	
+	/**
+	 * Sends a byte array to a URL using the method provided, and return the response.
+	 * @param url The URL to connect to.
+	 * @param https True if https. False if http.
+	 * @param method Use NetworkUtils.PUT/GET/POST/DELETE/HEAD for your use case.
+	 * @param binaryData A byte array containing the data you want to send.
+	 * @param dataBytes The number of bytes to read out of the array
+	 * @param headers JavaFX key value pairs of headers.
+	 * @return A String containing the response.
+	 * @throws MalformedURLException Throws if the URL is invalid
+	 * @throws IOException If a network exception occurred when sending the data
+	 */
+	@SafeVarargs
+	public final static String sendBinaryDataToURL(String url
+			,boolean https
+			,HttpMethods method
+			,byte[] binaryData
+			,int dataBytes
+			,Pair<String,String>... headers) throws MalformedURLException, IOException {
+		HttpURLConnection conn = getUrlConnection(url,https);
+		conn.setDoOutput(true);
+		for(Pair<String,String> h : headers){
+			conn.setRequestProperty(h.getKey(), h.getValue());
+		}
+		conn.setRequestMethod(httpMethodToString(method));
+		return sendBinaryDataToConnection(conn, binaryData, dataBytes);
+	}	
 	
 	/**
 	 * Sends data across a connection. This method assumes that the connection has been preconfigured with headers and methods.
@@ -69,6 +126,19 @@ public final class NetworkUtils {
 		wr.writeBytes(data);
 		wr.flush();
 		wr.close();
+		return getDataFromConnection(conn);
+	}
+
+	/**
+	 * Sends data across a connection. This method assumes that the connection has been preconfigured with headers and methods.
+	 * @param conn The connection to send the data across.
+	 * @param binaryData A byte array containing the data you want to send.
+	 * @param dataBytes The number of bytes in the data array.
+	 * @return The String response.
+	 * @throws IOException If a network exception occurred when sending the data
+	 */
+	public final static String sendBinaryDataToConnection(HttpURLConnection conn, byte[] binaryData, int dataBytes) throws IOException{
+		conn.getOutputStream().write(binaryData, 0, dataBytes);
 		return getDataFromConnection(conn);
 	}
 	
@@ -90,6 +160,32 @@ public final class NetworkUtils {
 		reader.close();
 		return data;
 	}
+	
+	/**
+	 * Gets the data as a byte array from a URLConnection object.
+	 * @param conn The connection to get data from
+	 * @return A byte array containing binary data from the endpoint.
+	 * @throws UnsupportedEncodingException If the UTF-8 encoding is not supported.
+	 * @throws IOException If an exception occurred getting the data.
+	 */
+	public final static byte[] getBinaryDataFromConnection(HttpURLConnection conn) throws UnsupportedEncodingException, IOException{
+		byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
+		byte[] output = new byte[0];
+		InputStream input = conn.getInputStream();
+		int bytesRead;
+		while((bytesRead = input.read(buffer)) != -1){
+			if(bytesRead < DOWNLOAD_BUFFER_SIZE){
+				byte[] temp = new byte[bytesRead];
+				for(int i = 0; i < temp.length; i++)
+					temp[i]=buffer[i];
+				output = MergeUtils.mergeByteArrays(output, temp);
+			}else {
+				output = MergeUtils.mergeByteArrays(output, buffer);
+			}
+		}
+		return output;
+	}
+	
 	/**
 	 * Gets the data at the URL using http or https.
 	 * @param url The String representing the location of the resource you're trying to get.
@@ -111,6 +207,29 @@ public final class NetworkUtils {
 		}
 		conn.setRequestMethod(httpMethodToString(method));
 		return getDataFromConnection(conn);
+	}
+	
+	/**
+	 * Gets the data at the URL as a byte array using http or https.
+	 * @param url The String representing the location of the resource you're trying to get.
+	 * @param https True if this is an https connection. False if this is an http connection.
+	 * @param method Use NetworkUtils.PUT/GET/POST/DELETE/HEAD for your use case.
+	 * @param headers Apache pairs that will be the headers.
+	 * @return The data at the url as a byte array.
+	 * @throws MalformedURLException If the URL wasn't valid.
+	 * @throws IOException If something went wrong getting the information.
+	 */
+	@SafeVarargs
+	public final static byte[] getBinaryDataFromURL(String url
+			,boolean https
+			,HttpMethods method
+			,Pair<String,String>... headers) throws MalformedURLException, IOException {
+		HttpURLConnection conn = getUrlConnection(url,https);
+		for(Pair<String,String> h:headers){
+			conn.setRequestProperty(h.getKey(), h.getValue());
+		}
+		conn.setRequestMethod(httpMethodToString(method));
+		return getBinaryDataFromConnection(conn);
 	}
 	
 	/**

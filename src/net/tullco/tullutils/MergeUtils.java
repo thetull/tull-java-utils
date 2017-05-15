@@ -116,12 +116,40 @@ public class MergeUtils {
 		baseReader.close();
 		writer.close();
 	}
-	private static String[] mergeStringArrays(String[] startingArray, String[] mergeArray){
+	/**
+	 * Creates a new array containing the contents of the starting array with the merge array concatenated to the end.
+	 * Will have length startingArray.length+mergeArray.length.
+	 * @param startingArray The starting array.
+	 * @param mergeArray The array to concatenate.
+	 * @return A new array containing the contents of both arrays.
+	 */
+	public static String[] mergeStringArrays(String[] startingArray, String[] mergeArray){
 		if(startingArray==null)
 			return mergeArray;
 		if(mergeArray==null)
 			return startingArray;
 		String[] newArray = new String[startingArray.length+mergeArray.length];
+		for(int i=0;i<newArray.length;i++){
+			if(i<startingArray.length)
+				newArray[i] = startingArray[i];
+			else
+				newArray[i] = mergeArray[i-startingArray.length];
+		}
+		return newArray;
+	}
+	/**
+	 * Creates a new array containing the contents of the starting array with the merge array concatenated to the end.
+	 * Will have length startingArray.length+mergeArray.length.
+	 * @param startingArray The starting array.
+	 * @param mergeArray The array to concatenate.
+	 * @return A new array containing the contents of both arrays.
+	 */
+	public static byte[] mergeByteArrays(byte[] startingArray, byte[] mergeArray){
+		if(startingArray==null)
+			return mergeArray;
+		if(mergeArray==null)
+			return startingArray;
+		byte[] newArray = new byte[startingArray.length+mergeArray.length];
 		for(int i=0;i<newArray.length;i++){
 			if(i<startingArray.length)
 				newArray[i] = startingArray[i];
