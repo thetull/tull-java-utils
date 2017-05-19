@@ -13,11 +13,20 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+/**
+ * A JDBC connection wrapper that abstracts away some of the complexities of querying for most use cases.
+ * @author Tull Gearreald
+ *
+ */
 public class SQLUtil implements Closeable {
 
 	private final Connection conn;
 	private boolean isClosed=false;
 	
+	/**
+	 * Creates an SQL Util object that you can use to make queries against the given connection.
+	 * @param conn The connection that the new object will make queries against.
+	 */
 	public SQLUtil(Connection conn){
 		this.conn=conn;
 	}
@@ -66,16 +75,16 @@ public class SQLUtil implements Closeable {
 		s.close();
 	}
 	/**
-	 * 
-	 * @param f
-	 * @param statement
-	 * @throws SQLException
-	 * @throws IOException
+	 * Gets the results of the given query as a CSV and saves them to the given file.
+	 * @param csv The file to save the results to.
+	 * @param statement The SELECT statement to run against the database.
+	 * @throws SQLException If there was a problem running the query.
+	 * @throws IOException If there was a problem writing the file.
 	 */
-	public void getResultsAsCSV(File f, String statement) throws SQLException, IOException {
+	public void getResultsAsCSV(File csv, String statement) throws SQLException, IOException {
 		ResultSet rs = this.executeSelect(statement);
 		ResultSetMetaData rsmd = rs.getMetaData();
-		CSVWriter writer = FileUtils.getCSVWriter(f);
+		CSVWriter writer = FileUtils.getCSVWriter(csv);
 		String[] headers = new String[rsmd.getColumnCount()];
 		for(int i=1;i<=rsmd.getColumnCount();i++){
 			headers[i-1] = rsmd.getColumnLabel(i);			
@@ -83,8 +92,15 @@ public class SQLUtil implements Closeable {
 		writer.writeNext(headers);
 		writeResultSetToCSV(writer,rs);
 	}
-	public void appendResultsToCSV(File f, String statement) throws SQLException, IOException {
-		CSVWriter writer = FileUtils.getCSVWriter(f, true);
+	/**
+	 * This method appends the results of the query to the given CSV. No headers will be written.
+	 * @param csv The CSV to append the results to.
+	 * @param statement The SELECT statement to run against the database.
+	 * @throws SQLException If there was a problem running the query.
+	 * @throws IOException If there was a problem writing the file.
+	 */
+	public void appendResultsToCSV(File csv, String statement) throws SQLException, IOException {
+		CSVWriter writer = FileUtils.getCSVWriter(csv, true);
 		try{
 			writeResultSetToCSV(writer,this.executeSelect(statement));
 		}finally{
