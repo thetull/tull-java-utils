@@ -2,11 +2,10 @@ package net.tullco.tullutils.lookerutils;
 
 import java.io.IOException;
 
-
-import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONObject;
 
 import net.tullco.tullutils.NetworkUtils;
+import net.tullco.tullutils.Pair;
 import net.tullco.tullutils.exceptions.LookerException;
 
 public class Authenticator {
@@ -44,7 +43,7 @@ public class Authenticator {
 	protected void logout() throws LookerException{
 		String url=this.apiEndpoint+LOGOUT_URL;
 		try {
-			NetworkUtils.getDataFromURL(url, true, NetworkUtils.DELETE, Pair.of("Authorization", "Bearer "+getAccessToken()));
+			NetworkUtils.getDataFromURL(url, true, NetworkUtils.DELETE, Pair.<String,String>of("Authorization", "Bearer "+getAccessToken()));
 		} catch (Exception e) {
 			throw new LookerException("Logout Failed.\n"+e.getMessage(),e);
 		} finally{

@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import net.tullco.tullutils.FileUtils;
 import net.tullco.tullutils.NetworkUtils;
+import net.tullco.tullutils.Pair;
 import net.tullco.tullutils.exceptions.LookerException;
 
 public class Query implements Closeable {
@@ -61,7 +61,7 @@ public class Query implements Closeable {
 						,true
 						,NetworkUtils.POST
 						,this.toString()
-						,Pair.of("Authorization","Bearer "+this.accessToken));
+						,Pair.<String,String>of("Authorization","Bearer "+this.accessToken));
 				JSONObject jsonResponse=new JSONObject(response);
 				this.id=jsonResponse.getInt("id");
 				this.slug=jsonResponse.getString("slug");
@@ -78,7 +78,7 @@ public class Query implements Closeable {
 					String.format(this.endpointLocation+RUN_QUERY_URL, this.id,outputCode)
 					,true
 					,NetworkUtils.GET
-					,Pair.of("Authorization","Bearer "+this.accessToken));
+					,Pair.<String,String>of("Authorization","Bearer "+this.accessToken));
 			return response;
 		} catch (Exception e) {
 			throw new LookerException(e.getMessage(),e);
@@ -261,7 +261,7 @@ public class Query implements Closeable {
 					String.format(endpointLocation+GET_QUERY_SLUG_URL,slug)
 					,true
 					,NetworkUtils.GET
-					,Pair.of("Authorization", "Bearer "+accessToken));
+					,Pair.<String,String>of("Authorization", "Bearer "+accessToken));
 			JSONObject json = new JSONObject(queryString);
 			Query q = new Query(accessToken,endpointLocation);
 			q.fromJSON(json);
@@ -279,7 +279,7 @@ public class Query implements Closeable {
 					String.format(endpointLocation+GET_QUERY_ID_URL,id)
 					,true
 					,NetworkUtils.GET
-					,Pair.of("Authorization", "Bearer "+accessToken));
+					,Pair.<String,String>of("Authorization", "Bearer "+accessToken));
 			System.out.println(queryString);
 			JSONObject json = new JSONObject(queryString);
 			Query q = new Query(accessToken,endpointLocation);

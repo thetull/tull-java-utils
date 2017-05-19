@@ -13,8 +13,6 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 /**
  * This is a static class that handles various network tasks, including sending and receiving data.
  * @author Tull Gearreald

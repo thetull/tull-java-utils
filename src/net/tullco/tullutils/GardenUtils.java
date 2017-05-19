@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,7 +25,7 @@ public final class GardenUtils {
 			String apiKey = Configuration.getConfiguration("GARDEN_API_KEY");
 			String keyringURL = String.format(GARDEN_URL+KEYRING_LOCATION,keyring);
 			String keyringResponse = NetworkUtils.getDataFromURL(
-					keyringURL, true, NetworkUtils.GET, new ImmutablePair<String,String>("Authorization",apiKey));
+					keyringURL, true, NetworkUtils.GET, Pair.<String,String>of("Authorization",apiKey));
 			
 			JSONObject keyringResponseJson = new JSONObject(keyringResponse);
 			JSONArray keyIds = keyringResponseJson.getJSONArray("result").getJSONObject(0).getJSONArray("keys");
@@ -34,7 +33,7 @@ public final class GardenUtils {
 	
 			String keyURL = String.format(GARDEN_URL+KEY_LOCATION,keyIdString);
 			String keysResponse = NetworkUtils.getDataFromURL(
-					keyURL, true, NetworkUtils.GET, new ImmutablePair<String,String>("Authorization",apiKey));
+					keyURL, true, NetworkUtils.GET, Pair.<String,String>of("Authorization",apiKey));
 			
 			JSONObject keysResponseJson = new JSONObject(keysResponse);
 
