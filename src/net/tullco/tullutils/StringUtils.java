@@ -76,7 +76,7 @@ public class StringUtils {
 	 */
 	public static String leftPad(String base, char character, int padding){
 		String paddingString = "";
-		for(int i=0;i<=base.length()-padding;i++)
+		for(int i=0;i<padding-base.length();i++)
 			paddingString+=character;
 		return paddingString+base;
 	}
