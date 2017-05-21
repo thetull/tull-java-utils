@@ -52,7 +52,7 @@ public final class NullUtils {
 	 * @return Either null or the string that was passed in.
 	 */
 	public final static String emptyToNull(String s){
-		if(s.equals(""))
+		if(s==null || s.equals(""))
 			return null;
 		else
 			return s;
