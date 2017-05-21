@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -22,6 +23,9 @@ import com.opencsv.CSVWriter;
 
 public final class FileUtils {
 
+	private static final int BYTE_BUFFER_SIZE = 1024*100;
+	private static final int WRITER_RETRIES = 5;
+	
 	/**
 	 * Gets a File Writer from a string containing the full path.
 	 * If the file writer cannot be accessed for writing, it will continue to try,
@@ -60,7 +64,8 @@ public final class FileUtils {
 	 */
 	public static FileWriter getFileWriter(File f, boolean append) throws IOException{
 		FileWriter fw=null;
-		while(true){
+		int i=0;
+		while(i<WRITER_RETRIES){
 			try{
 				fw=new FileWriter(f, append);
 				break;
@@ -72,6 +77,7 @@ public final class FileUtils {
 			}catch(InterruptedException e2){
 				break;
 			}
+			i++;
 		}
 		return fw;
 	}
@@ -254,27 +260,80 @@ public final class FileUtils {
 		}
 	}
 	/**
-	 * Generates an md5 hash for the given file. May have problems with gigabyte scale files.
+	 * Generates a sha1 hash for the given file. Will not load the entire file into memory.
 	 * @param f The file to hash.
-	 * @return A string containing the md5 hash.
-	 * @throws NoSuchAlgorithmException If the MD5 hashing algorithm isn't currently available.
+	 * @return A string containing the SHA-1 hash.
+	 * @throws NoSuchAlgorithmException If the SHA-1 hashing algorithm isn't currently available.
 	 * @throws IOException If there is a problem reading the files.
 	 */
-	public static String md5Hash(File f) throws NoSuchAlgorithmException, IOException{
-		byte[] b = getFileAsBytes(f);
-		byte[] hash = MessageDigest.getInstance("MD5").digest(b);
-		return DatatypeConverter.printHexBinary(hash);
+	public static String sha1Hash(File f) throws NoSuchAlgorithmException, IOException{
+		MessageDigest md = MessageDigest.getInstance("SHA-1");
+		byte[] buffer = new byte[BYTE_BUFFER_SIZE];
+		try (DigestInputStream dis = new DigestInputStream(new FileInputStream(f), md))	{
+			while(dis.read(buffer)!=-1);
+		}
+		
+		byte[] digest = md.digest();
+		return DatatypeConverter.printHexBinary(digest);
 	}
 	/**
-	 * Compares two files for exact equality. 
+	 * Hashes the two files and returns true if the hashes are the same and false if they are different.
+	 * @param f1 The first file to compare.
+	 * @param f2 The second file to compare.
+	 * @return True if the files have the same SHA 1 hash. False otherwise.
+	 * @throws NoSuchAlgorithmException If the platform doesn't sup
+	 * @throws IOException If the files can't be read
+	 */
+	public static boolean filesSHA1Equal(File f1, File f2) throws NoSuchAlgorithmException, IOException{
+		try{
+			String f1Hash = sha1Hash(f1);
+			String f2Hash = sha1Hash(f2);
+			return f1Hash.equals(f2Hash);
+		}catch(FileNotFoundException e){
+			return false;
+		}
+	}
+	/**
+	 * Compares the contents of two files for exact equality. Will not load either file into memory.
+	 * Will be false if either or both files don't exist.
 	 * @param f1 The file to compare.
 	 * @param f2 The file to compare against.
 	 * @return True if the files are equal. False otherwise.
 	 * @throws IOException If there is a problem reading the files.
 	 */
 	public static boolean filesEqual(File f1, File f2) throws IOException{
-		byte[] b1 = getFileAsBytes(f1);
-		byte[] b2 = getFileAsBytes(f2);
-		return Arrays.equals(b1, b2);
+		FileInputStream f1stream=null;
+		FileInputStream f2stream=null;
+		try{
+			f1stream= new FileInputStream(f1);
+			f2stream= new FileInputStream(f2);
+			byte[] buffer1 = new byte[BYTE_BUFFER_SIZE];
+			byte[] buffer2 = new byte[BYTE_BUFFER_SIZE];
+			int read1;
+			int read2;
+			while(true){
+				read1 = f1stream.read(buffer1);
+				read2 = f2stream.read(buffer2);
+				if (read1!=read2)
+					return false;
+				if(read1==-1 && read1==-1)
+					return true;
+				if(read1==-1 || read2==-1)
+					return false;
+				if(Arrays.equals(buffer1, buffer2)){
+					continue;
+				}else{
+					return false;
+				}
+			}
+		}catch(FileNotFoundException e){
+			return false;
+		}finally{
+			if(f1stream!=null)
+				f1stream.close();
+			if(f2stream!=null)
+				f2stream.close();
+		}
+		
 	}
 }
