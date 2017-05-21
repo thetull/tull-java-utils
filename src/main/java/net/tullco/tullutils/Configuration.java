@@ -44,4 +44,10 @@ public final class Configuration {
 		else
 			return false;
 	}
+	/**
+	 * Clears all the set configurations. Will not clear environment variables.
+	 */
+	public static void clearAllConfigurations(){
+		configurationMap.clear();
+	}
 }
