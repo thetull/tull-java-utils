@@ -283,7 +283,7 @@ public final class FileUtils {
 	/**
 	 * Generates a sha1 hash for the given file. Will not load the entire file into memory.
 	 * @param f The file to hash.
-	 * @return A string containing the SHA-1 hash.
+	 * @return A string containing the SHA-1 hash as a hex string.
 	 * @throws NoSuchAlgorithmException If the SHA-1 hashing algorithm isn't currently available.
 	 * @throws IOException If there is a problem reading the files.
 	 */
@@ -295,6 +295,17 @@ public final class FileUtils {
 		}
 		
 		byte[] digest = md.digest();
+		return DatatypeConverter.printHexBinary(digest);
+	}
+	/**
+	 * Generates a sha1 hash for the given byte array.
+	 * @param b The byte array to hash
+	 * @return A string containing the SHA-1 hash as a hex string.
+	 * @throws NoSuchAlgorithmException If the SHA-1 hashing algorithm isn't currently available.
+	 */
+	public static String sha1Hash(byte[] b) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("SHA-1");
+		byte[] digest =md.digest(b);
 		return DatatypeConverter.printHexBinary(digest);
 	}
 	/**
