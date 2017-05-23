@@ -45,6 +45,14 @@ public class FileUtilsTest {
 		assertEquals(expectedString, FileUtils.getFileAsString(f));
 	}
 	@Test
+	public void writeBytesToFileTest() throws IOException {
+		File f = File.createTempFile("tullfile_test", ".txt");
+		byte[] b = {122,123,34,22};
+		FileUtils.writeBytesToFile(b, f);
+		byte[] actual = FileUtils.getFileAsBytes(f);
+		assertTrue(Arrays.equals(b,actual));
+	}
+	@Test
 	public void fileReaderTest() throws IOException {
 		File f = TestResourceLoader.getResource("txt/SimpleText.txt");
 		BufferedReader reader = new BufferedReader(FileUtils.getFileReader(f));

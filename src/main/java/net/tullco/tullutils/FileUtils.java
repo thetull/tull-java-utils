@@ -236,6 +236,27 @@ public final class FileUtils {
 		writeStringToFile(s,f);
 	}
 	/**
+	 * Writes a byte array to the given file
+	 * @param b The byte array to write
+	 * @param f The File to write to.
+	 * @throws IOException If something goes very wrong.
+	 */
+	public static void writeBytesToFile(byte[] b, File f) throws IOException {
+		FileOutputStream fos = new FileOutputStream(f);
+		fos.write(b);
+		fos.close();
+	}
+	/**
+	 * Writes a byte array to the file at the given path.
+	 * @param b The byte array to write
+	 * @param filePath The path to the file you want to write to.
+	 * @throws IOException If something goes very wrong.
+	 */
+	public static void writeBytesToFile(byte[] b, String filePath) throws IOException {
+		File f = new File(filePath);
+		writeBytesToFile(b, f);
+	}
+	/**
 	 * Creates a new copy of the source file at the destination location.
 	 * @param source The location of the original file.
 	 * @param dest The location of the destination file.
