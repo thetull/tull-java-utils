@@ -9,9 +9,16 @@ import net.tullco.tullutils.test_classes.GraphTest;
 import net.tullco.tullutils.test_classes.MergeUtilsTest;
 import net.tullco.tullutils.test_classes.NullUtilsTest;
 import net.tullco.tullutils.test_classes.PairTest;
+import net.tullco.tullutils.test_classes.StringUtilsTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ FileUtilsTest.class, GraphTest.class, MergeUtilsTest.class, NullUtilsTest.class, PairTest.class })
+@SuiteClasses({ 
+	FileUtilsTest.class
+	,GraphTest.class
+	,MergeUtilsTest.class
+	,NullUtilsTest.class
+	,PairTest.class
+	,StringUtilsTest.class })
 public class AllTests {
 
 }

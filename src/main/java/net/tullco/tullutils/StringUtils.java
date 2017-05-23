@@ -14,10 +14,14 @@ public class StringUtils {
 	 * @return A cropped string.
 	 */
 	public static String left(String s, int length){
+		if(s==null)
+			return null;
 		if(length==0)
 			return "";
 		if(s.length()<length)
 			return s;
+		if(s.length()<Math.abs(length))
+			return "";
 		else if(length>0)
 			return s.substring(0, length);
 		else{
@@ -32,10 +36,14 @@ public class StringUtils {
 	 * @return A cropped string.
 	 */
 	public static String right(String s, int length){
+		if(s==null)
+			return null;
 		if(length==0)
 			return "";
 		if(s.length()<length)
 			return s;
+		if(s.length()<Math.abs(length))
+			return "";
 		else if(length>0)
 			return s.substring(s.length()-length, s.length());
 		else{
