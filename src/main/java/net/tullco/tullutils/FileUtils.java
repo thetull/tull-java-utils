@@ -65,11 +65,14 @@ public final class FileUtils {
 	public static FileWriter getFileWriter(File f, boolean append) throws IOException{
 		FileWriter fw=null;
 		int i=0;
-		while(i<WRITER_RETRIES){
+		while(true){
 			try{
 				fw=new FileWriter(f, append);
 				break;
 			}catch(FileNotFoundException e){
+				if(i>=WRITER_RETRIES){
+					throw e;
+				}
 				System.out.println("Could not open for writing. Trying again in 5 seconds...");
 			}
 			try{
