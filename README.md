@@ -23,6 +23,6 @@ Then you can add the dependancy with the following
 <dependency>
   <groupId>net.tullco</groupId>
   <artifactId>TullUtils</artifactId>
-  <version>0.9</version>
+  <version>0.10</version>
 </dependency>
 ```
