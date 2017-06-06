@@ -18,7 +18,7 @@ This library is self-hosted, and not in maven central. To include it, add the fo
   </repository>
 </repositories>
 ```
-Then you can add the dependancy with the following
+Then you can add the dependency with the following
 ```xml
 <dependency>
   <groupId>net.tullco</groupId>
