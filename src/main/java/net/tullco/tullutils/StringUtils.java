@@ -1,5 +1,8 @@
 package net.tullco.tullutils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * A static container class for String utility methods.
  * @author Tull Gearreald
@@ -100,5 +103,17 @@ public class StringUtils {
 		while(base.length()<padding)
 			base+=character;
 		return base;
+	}
+	/**
+	 * Takes the exception stack trace and returns it as a string.
+	 * @param e The exception to convert.
+	 * @return The stack trace of the given exception as a string.
+	 */
+	public static String exceptionStackTraceToString(Exception e){
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(stringWriter);
+		e.printStackTrace(printWriter);
+		String stackTrace = stringWriter.toString();
+		return stackTrace;
 	}
 }
