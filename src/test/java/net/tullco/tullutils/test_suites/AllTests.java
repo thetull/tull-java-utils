@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import net.tullco.tullutils.test_classes.FileUtilsTest;
 import net.tullco.tullutils.test_classes.GraphTest;
+import net.tullco.tullutils.test_classes.ListUtilsTest;
 import net.tullco.tullutils.test_classes.MergeUtilsTest;
 import net.tullco.tullutils.test_classes.NullUtilsTest;
 import net.tullco.tullutils.test_classes.PairTest;
@@ -18,7 +19,8 @@ import net.tullco.tullutils.test_classes.StringUtilsTest;
 	,MergeUtilsTest.class
 	,NullUtilsTest.class
 	,PairTest.class
-	,StringUtilsTest.class })
+	,StringUtilsTest.class
+	,ListUtilsTest.class })
 public class AllTests {
 
 }
