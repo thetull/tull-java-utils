@@ -49,6 +49,20 @@ public class StringUtilsTest {
 	}
 
 	@Test
+	public void testAssureNotStartsWith() {
+		String testString = "Late Night";
+		assertEquals("Late Night", StringUtils.assureNotStartsWith(testString, "Night"));
+		assertEquals("Night", StringUtils.assureNotStartsWith(testString, "Late "));
+	}
+
+	@Test
+	public void testAssureNotEndsWith() {
+		String testString = "DayTime";
+		assertEquals("Day", StringUtils.assureNotEndsWith(testString, "Time"));
+		assertEquals("DayTime", StringUtils.assureNotEndsWith(testString, "ay"));
+	}
+	
+	@Test
 	public void testLeftPad() {
 		String testString = "Ryuji";
 		assertEquals("Ryuji",StringUtils.leftPad(testString, '!', 0));
