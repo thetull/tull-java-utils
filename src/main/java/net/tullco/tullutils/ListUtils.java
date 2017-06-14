@@ -10,6 +10,7 @@ import java.util.List;
 public class ListUtils {
 	/**
 	 * Adds the items from list 2 that are not in list 1 to the end of list 1. Will not create additional duplication.
+	 * @param <T> The list type. Must be consistent.
 	 * @param list1 The list to modify.
 	 * @param list2 The list containing the elements to add.
 	 */
@@ -22,6 +23,7 @@ public class ListUtils {
 	/**
 	 * Takes the base list, and adds and removes elements from it until it contains the same elements as the goal list.
 	 * No ordering is guaranteed.
+	 * @param <T> The list type. Must be consistent.
 	 * @param baseList The list to change.
 	 * @param goalList The list containing the goal elements.
 	 */

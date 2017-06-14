@@ -41,7 +41,7 @@ public final class NetworkUtils {
 	
 	/**
 	 * Creates a network connection object. The default settings are: GET, and HTTPS.
-	 * @param The url for this object. It can be changed later.
+	 * @param url The url for this object. It can be changed later.
 	 */
 	public NetworkUtils(String url){
 		this.headers=new HashSet<Pair<String,String>>();
@@ -98,7 +98,7 @@ public final class NetworkUtils {
 	}
 	/**
 	 * Set if you want the connection to use HTTPS.
-	 * @param useHttps
+	 * @param useHttps True or false depending on if you want the connection to use HTTPS or HTTP
 	 */
 	public void setHttps(boolean useHttps) {
 		this.useHttps = useHttps;
