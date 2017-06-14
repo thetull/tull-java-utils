@@ -10,6 +10,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -22,15 +24,174 @@ public final class NetworkUtils {
 	/**
 	 * The allowed HTTP methods. Currently PUT, GET, POST, DELETE, and HEAD.
 	 */
-
 	private static enum HttpMethods {PUT, GET, POST, DELETE, HEAD};
+	private static final int DOWNLOAD_BUFFER_SIZE = 4096;
 	public static final HttpMethods PUT = HttpMethods.PUT;
 	public static final HttpMethods GET = HttpMethods.GET;
 	public static final HttpMethods POST = HttpMethods.POST;
 	public static final HttpMethods DELETE = HttpMethods.DELETE;
 	public static final HttpMethods HEAD = HttpMethods.HEAD;
-	public static final int DOWNLOAD_BUFFER_SIZE = 4096;
 
+	private boolean useHttps;
+	private String url;
+	private Set<Pair<String,String>> headers;
+	private String dataToSend;
+	private String contentType;
+	private HttpMethods method;
+	
+	/**
+	 * Creates a network connection object. The default settings are: GET, and HTTPS.
+	 * @param The url for this object. It can be changed later.
+	 */
+	public NetworkUtils(String url){
+		this.headers=new HashSet<Pair<String,String>>();
+		this.setMethod(HttpMethods.GET);
+		this.setHttps(true);
+		this.setUrl(url);
+		this.setDataToSend(null);
+		this.setContentType(null);
+	}
+	
+	/**
+	 * Uses the configured settings to get the data from the url.
+	 * @return The data retrieved.
+	 * @throws MalformedURLException If the URL is malformed.
+	 * @throws IOException If there is an IOException
+	 */
+	public String getResponse() throws MalformedURLException, IOException{
+		HttpURLConnection c = this.getConfiguredConnection();
+		String response;
+		if(this.getDataToSend()!=null){
+			response = NetworkUtils.sendDataToConnection(c, this.getDataToSend());
+		}else{
+			response = NetworkUtils.getDataFromConnection(c);
+		}
+		return response;
+	}
+	
+	private HttpURLConnection getConfiguredConnection() throws MalformedURLException, IOException{
+		String urlToUse;
+		if(isHttps()) {
+			urlToUse = StringUtils.assureStartsWith(StringUtils.assureNotStartsWith(this.getUrl(), "http://"), "https://");
+		}else{
+			urlToUse = StringUtils.assureStartsWith(StringUtils.assureNotStartsWith(this.getUrl(), "https://"), "http://");
+		}	
+		HttpURLConnection c = NetworkUtils.getUrlConnection(urlToUse, isHttps());
+		c.setRequestMethod(NetworkUtils.httpMethodToString(this.getMethod()));
+		if(this.getContentType()!=null){
+			c.setRequestProperty("Content-Type", this.getContentType());
+		}
+		for(Pair<String,String> p: this.getHeaders()){
+			if(!p.left.equals("Content-Type")) {
+				c.setRequestProperty(p.left,p.right);
+			}
+		}
+		return c;
+	}
+	
+	/**
+	 * Checks whether or not this method will use HTTPS.
+	 * @return Yes if the connection is using https. No otherwise.
+	 */
+	public boolean isHttps() {
+		return useHttps;
+	}
+	/**
+	 * Set if you want the connection to use HTTPS.
+	 * @param useHttps
+	 */
+	public void setHttps(boolean useHttps) {
+		this.useHttps = useHttps;
+	}
+
+	/**
+	 * Gets the current URL for the request.
+	 * @return The url
+	 */
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * Sets the url for the request.
+	 * @param url The url
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	/**
+	 * Get the currently attached headers.
+	 * @return A set of pairs of headers.
+	 */
+	public Set<Pair<String,String>> getHeaders() {
+		return headers;
+	}
+
+	/**
+	 * Add the given key value pair to the headers.
+	 * @param key The key of the header 
+	 * @param value The value of the header.
+	 */
+	public void addHeaders(String key, String value) {
+		this.headers.add(Pair.<String,String>of(key, value));
+	}
+	
+	/**
+	 * Remove all headers. After this call, no headers will be sent with the request until more are added. 
+	 */
+	public void clearHeaders(){
+		this.headers.clear();
+	}
+
+	/**
+	 * Get the data that will be sent across the network.
+	 * @return the data that was sent.
+	 */
+	public String getDataToSend() {
+		return dataToSend;
+	}
+
+	/**
+	 * The data to send with the next request. Set to null if you don't want to send any data.
+	 * @param dataToSend The data you want to send.
+	 */
+	public void setDataToSend(String dataToSend) {
+		this.dataToSend = dataToSend;
+	}
+
+	/**
+	 * Get the content type of the request
+	 * @return The Content Type
+	 */
+	public String getContentType() {
+		return contentType;
+	}
+
+	/**
+	 * Set the content type of the request
+	 * @param contentType The content type to use
+	 */
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	/**
+	 * Get the HTTP Method used in the request.
+	 * @return The HTTP Method being used.
+	 */
+	public HttpMethods getMethod() {
+		return method;
+	}
+
+	/**
+	 * Set the HTTP Method to be used in the request.
+	 * @param method The method to be used.
+	 */
+	public void setMethod(HttpMethods method) {
+		this.method = method;
+	}
+	
 	/**
 	 * Sends data to a URL using the method provided, and return the response.
 	 * @param url The URL to connect to.
@@ -120,6 +281,7 @@ public final class NetworkUtils {
 	 * @throws IOException If a network exception occurred when sending the data
 	 */
 	public final static String sendDataToConnection(HttpURLConnection conn,String data) throws IOException{
+		conn.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
 		wr.writeBytes(data);
 		wr.flush();
@@ -136,6 +298,7 @@ public final class NetworkUtils {
 	 * @throws IOException If a network exception occurred when sending the data
 	 */
 	public final static String sendBinaryDataToConnection(HttpURLConnection conn, byte[] binaryData, int dataBytes) throws IOException{
+		conn.setDoOutput(true);
 		conn.getOutputStream().write(binaryData, 0, dataBytes);
 		return getDataFromConnection(conn);
 	}
