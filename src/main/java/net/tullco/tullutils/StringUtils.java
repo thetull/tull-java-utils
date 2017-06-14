@@ -78,6 +78,30 @@ public class StringUtils {
 		return base;
 	}
 	/**
+	 * This method assures that a string does not start with a given string. If the string doesn't start with it, then there is no change.
+	 * Otherwise, it is removed and returned.
+	 * @param base The base string.
+	 * @param assure The string you want to assure the base does not start with.
+	 * @return The base string not starting with the assure string.
+	 */
+	public static String assureNotStartsWith(String base, String assure){
+		if(base.startsWith(assure))
+			return base.substring(assure.length());
+		return base;
+	}
+	/**
+	 * This method assures that a string does not end with a given string. If the string doesn't end with it, then there is no change.
+	 * Otherwise, it is removed and returned.
+	 * @param base The base string.
+	 * @param assure The string you want to assure the base does not end with.
+	 * @return The base string not ending with the assure string.
+	 */
+	public static String assureNotEndsWith(String base, String assure){
+		if(base.endsWith(assure))
+			return base.substring(0, base.length()-assure.length());
+		return base;
+	}
+	/**
 	 * Adds the given character to the left of the given string until it reaches the requested length.
 	 * If the string is already as long as or longer than the padding, then it will be returned unchanged. 
 	 * @param base The string to pad.
