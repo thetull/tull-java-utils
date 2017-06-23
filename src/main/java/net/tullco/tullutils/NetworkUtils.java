@@ -22,13 +22,14 @@ import javax.net.ssl.HttpsURLConnection;
 public final class NetworkUtils {
 
 	/**
-	 * The allowed HTTP methods. Currently PUT, GET, POST, DELETE, and HEAD.
+	 * The allowed HTTP methods. Currently PUT, GET, POST, PATCH, DELETE, and HEAD.
 	 */
-	private static enum HttpMethods {PUT, GET, POST, DELETE, HEAD};
+	private static enum HttpMethods {PUT, GET, POST, PATCH, DELETE, HEAD};
 	private static final int DOWNLOAD_BUFFER_SIZE = 4096;
 	public static final HttpMethods PUT = HttpMethods.PUT;
 	public static final HttpMethods GET = HttpMethods.GET;
 	public static final HttpMethods POST = HttpMethods.POST;
+	public static final HttpMethods PATCH = HttpMethods.PATCH;
 	public static final HttpMethods DELETE = HttpMethods.DELETE;
 	public static final HttpMethods HEAD = HttpMethods.HEAD;
 
@@ -470,6 +471,8 @@ public final class NetworkUtils {
 				return "GET";
 			case POST:
 				return "POST";
+			case PATCH:
+				return "PATCH";
 			case DELETE:
 				return "DELETE";
 			case HEAD:
