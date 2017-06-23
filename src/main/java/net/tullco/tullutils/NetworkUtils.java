@@ -324,7 +324,6 @@ public final class NetworkUtils {
 	 * @throws IOException If an exception occurred getting the data.
 	 */
 	public final static String getDataFromConnection(HttpURLConnection conn) throws UnsupportedEncodingException, IOException{
-		System.out.println(conn.getResponseCode());
 		BufferedReader reader=new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 		String line;
 		String data="";
