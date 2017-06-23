@@ -26,10 +26,11 @@ public final class Configuration {
 	public static String getConfiguration(String key) throws UnconfiguredException{
 		if(configurationMap.containsKey(key))
 			return configurationMap.get(key);
-		else if(System.getenv().containsKey(key))
+		else if(System.getenv().containsKey(key)){
 			return System.getenv(key);
-		else
+		}else{
 			throw new UnconfiguredException("The value "+key+" is not configured.");
+		}
 	}
 	/**
 	 * Checks if a given key has a configuration value attached.
