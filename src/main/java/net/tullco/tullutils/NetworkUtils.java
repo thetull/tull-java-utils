@@ -79,6 +79,9 @@ public final class NetworkUtils {
 		}	
 		HttpURLConnection c = NetworkUtils.getUrlConnection(urlToUse, isHttps());
 		c.setRequestMethod(NetworkUtils.httpMethodToString(this.getMethod()));
+		if(method==HttpMethods.PATCH){
+			c.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+		}
 		if(this.getContentType()!=null){
 			c.setRequestProperty("Content-Type", this.getContentType());
 		}
@@ -216,6 +219,9 @@ public final class NetworkUtils {
 			conn.setRequestProperty(h.getKey(), h.getValue());
 		}
 		conn.setRequestMethod(httpMethodToString(method));
+		if(method==HttpMethods.PATCH){
+			conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+		}
 		return sendDataToConnection(conn,data);
 	}
 
@@ -242,6 +248,9 @@ public final class NetworkUtils {
 			conn.setRequestProperty(h.getKey(), h.getValue());
 		}
 		conn.setRequestMethod(httpMethodToString(method));
+		if(method==HttpMethods.PATCH){
+			conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+		}
 		return sendBinaryDataToConnection(conn, binaryData, binaryData.length);
 	}	
 	
@@ -271,6 +280,9 @@ public final class NetworkUtils {
 			conn.setRequestProperty(h.getKey(), h.getValue());
 		}
 		conn.setRequestMethod(httpMethodToString(method));
+		if(method==HttpMethods.PATCH){
+			conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+		}
 		return sendBinaryDataToConnection(conn, binaryData, dataBytes);
 	}	
 	
@@ -312,6 +324,7 @@ public final class NetworkUtils {
 	 * @throws IOException If an exception occurred getting the data.
 	 */
 	public final static String getDataFromConnection(HttpURLConnection conn) throws UnsupportedEncodingException, IOException{
+		System.out.println(conn.getResponseCode());
 		BufferedReader reader=new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 		String line;
 		String data="";
@@ -368,6 +381,9 @@ public final class NetworkUtils {
 			conn.setRequestProperty(h.getKey(), h.getValue());
 		}
 		conn.setRequestMethod(httpMethodToString(method));
+		if(method==HttpMethods.PATCH){
+			conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+		}
 		return getDataFromConnection(conn);
 	}
 	
@@ -391,6 +407,9 @@ public final class NetworkUtils {
 			conn.setRequestProperty(h.getKey(), h.getValue());
 		}
 		conn.setRequestMethod(httpMethodToString(method));
+		if(method==HttpMethods.PATCH){
+			conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+		}
 		return getBinaryDataFromConnection(conn);
 	}
 	
@@ -472,7 +491,7 @@ public final class NetworkUtils {
 			case POST:
 				return "POST";
 			case PATCH:
-				return "PATCH";
+				return "POST";
 			case DELETE:
 				return "DELETE";
 			case HEAD:
