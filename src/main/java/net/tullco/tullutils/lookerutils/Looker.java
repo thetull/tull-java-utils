@@ -112,6 +112,21 @@ public class Looker implements Closeable {
 		return Query.getQueryById(this.getAccessToken(), this.endpointLocation, id);
 	}
 	
+	public Look getLookById(int id) throws LookerException {
+		return Look.getLookById(this.getAccessToken(), this.endpointLocation, id);
+	}
+	
+	public Look createNewLook(String title, int spaceId, int queryId) throws LookerException{
+		return Look.getNewLook(getAccessToken(), getEndpointLocation(), title, spaceId, queryId);
+	}
+	
+	public Space getSpaceById(int id) throws LookerException {
+		return Space.getSpaceById(this.getAccessToken(), this.endpointLocation, id);
+	}
+	
+	public Space createNewSpace(String name, int parentSpaceId) throws LookerException{
+		return Space.createNewSpace(getAccessToken(), endpointLocation, name, parentSpaceId);
+	}
 	protected String getAccessToken() throws LookerException {
 		return this.auth.getAccessToken();
 	}
@@ -119,6 +134,7 @@ public class Looker implements Closeable {
 	protected String getEndpointLocation() { 
 		return this.endpointLocation;
 	}
+	
 	@Override
 	public void close() throws IOException {
 		this.closed=false;

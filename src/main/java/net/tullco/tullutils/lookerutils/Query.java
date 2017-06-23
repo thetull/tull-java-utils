@@ -49,6 +49,10 @@ public class Query implements Closeable {
 		this.filters=new JSONObject();
 	}
 	
+	public Query(JSONObject json, String accessToken, String endpointLocation){
+		this(accessToken, endpointLocation);
+	}
+	
 	/**
 	 * Saves the query, as it is currently designed to the attached Looker instance.
 	 * @throws LookerException If the query can't be saved
@@ -116,7 +120,6 @@ public class Query implements Closeable {
 		File tempFile = File.createTempFile("looker_cache_", ".csv");
 		tempFile.deleteOnExit();
 		String output=runQuery(OutputType.CSV);
-		System.out.println(output);
 		FileUtils.writeStringToFile(output, tempFile);
 		return tempFile;
 	}
