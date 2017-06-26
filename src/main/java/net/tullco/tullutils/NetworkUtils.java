@@ -324,15 +324,27 @@ public final class NetworkUtils {
 	 * @throws IOException If an exception occurred getting the data.
 	 */
 	public final static String getDataFromConnection(HttpURLConnection conn) throws UnsupportedEncodingException, IOException{
-		BufferedReader reader=new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-		String line;
-		String data="";
-		while((line=reader.readLine())!=null){
-			data+=line;
-			data+="\n";
+		try{
+			BufferedReader reader=new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+			String line;
+			String data="";
+			while((line=reader.readLine())!=null){
+				data+=line;
+				data+="\n";
+			}
+			reader.close();
+			return data;
+		}catch(IOException e){
+			BufferedReader reader=new BufferedReader(new InputStreamReader(conn.getErrorStream(), "UTF-8"));
+			String line;
+			String data="";
+			while((line=reader.readLine())!=null){
+				data+=line;
+				data+="\n";
+			}
+			reader.close();
+			return data;
 		}
-		reader.close();
-		return data;
 	}
 	
 	/**

@@ -277,17 +277,14 @@ public class Query implements Closeable {
 	
 	protected static Query getQueryById(String accessToken, String endpointLocation, int id) throws LookerException{
 		try{
-			System.out.println(String.format(endpointLocation+GET_QUERY_ID_URL,id));
 			String queryString = NetworkUtils.getDataFromURL(
 					String.format(endpointLocation+GET_QUERY_ID_URL,id)
 					,true
 					,NetworkUtils.GET
 					,Pair.<String,String>of("Authorization", "Bearer "+accessToken));
-			System.out.println(queryString);
 			JSONObject json = new JSONObject(queryString);
 			Query q = new Query(accessToken,endpointLocation);
 			q.fromJSON(json);
-			System.out.println(q);
 			return q;
 		}catch(IOException e){
 			throw new LookerException("Error fetching Query",e);

@@ -37,14 +37,17 @@ public class Look {
 	private String longURL;
 	private Query query;
 
-	public Look(String accessToken, String apiEndpoint){
+	protected Look(String accessToken, String apiEndpoint){
 		this.apiEndpoint=apiEndpoint;
 		this.accessToken=accessToken;
 		this.id=0;
 	}
-	public Look(JSONObject json, String accessToken, String apiEndpoint){
+	protected Look(JSONObject json, String accessToken, String apiEndpoint){
 		this(accessToken, apiEndpoint);
 		this.fromJSON(json);
+	}
+	public int getId(){
+		return this.id;
 	}
 	public String getTitle(){
 		return this.title;
@@ -150,13 +153,17 @@ public class Look {
 		json.put("id", this.id);
 		return json;
 	}
-	protected static Look getNewLook(String accessToken, String apiEndpoint, String title, int spaceId, int queryId) throws LookerException{
+	protected static Look getNewLook(String accessToken, String apiEndpoint, String title, Space space, int queryId) throws LookerException{
 		Look l = new Look(accessToken,apiEndpoint);
 		l.setQueryId(queryId);
-		l.setSpaceId(spaceId);
+		l.setSpaceId(space.getId());
 		l.setTitle(title);
 		l.save();
 		return l;
+	}
+	protected static Look getNewLook(String accessToken, String apiEndpoint, String title, Space space, Query query) throws LookerException{
+		query.saveQuery();
+		return getNewLook(accessToken, apiEndpoint, title, space, query.getId());
 	}
 	protected static Look getLookById(String accessToken, String apiEndpoint, int id) throws LookerException{
 		String url = String.format(apiEndpoint+GET_LOOK_URL, id);

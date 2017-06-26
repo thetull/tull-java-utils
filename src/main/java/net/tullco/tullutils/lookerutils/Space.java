@@ -82,6 +82,21 @@ public class Space {
 		}
 		return subspaces;
 	}
+	public Dashboard createDashboard(String title) throws LookerException{
+		this.save();
+		Dashboard d = Dashboard.getNewDashboard(id, title, accessToken, apiEndpoint);
+		refresh();
+		return d;
+	}
+	public Look createLook(String title, int queryId) throws LookerException{
+		this.save();
+		Look l = Look.getNewLook(accessToken, apiEndpoint, title, this, queryId);
+		refresh();
+		return l;
+	}
+	public Look createLook(String title, Query q) throws LookerException{
+		return this.createLook(title, q.getId());
+	}
 	private void fromJSON(JSONObject json){
 		if(json.has("id"))
 			this.id=json.getInt("id");
