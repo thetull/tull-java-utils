@@ -31,6 +31,7 @@ public class Query implements Closeable {
 	private ArrayList<String> pivots;
 	private ArrayList<String> sorts;
 	private JSONObject filters;
+	private JSONObject visConfig;
 	private final static String GET_QUERY_ID_URL="queries/%d";
 	private final static String GET_QUERY_SLUG_URL="queries/slug/%s";
 	private final static String CREATE_QUERY_URL="queries";
@@ -47,10 +48,16 @@ public class Query implements Closeable {
 		this.pivots=new ArrayList<String>();
 		this.sorts=new ArrayList<String>();
 		this.filters=new JSONObject();
+		this.visConfig=new JSONObject();
 	}
 	
 	public Query(JSONObject json, String accessToken, String endpointLocation){
 		this(accessToken, endpointLocation);
+		this.fromJSON(json);
+	}
+	
+	public void setVisualization(JSONObject json){
+		this.visConfig=json;
 	}
 	
 	/**
@@ -67,8 +74,7 @@ public class Query implements Closeable {
 						,this.toString()
 						,Pair.<String,String>of("Authorization","Bearer "+this.accessToken));
 				JSONObject jsonResponse=new JSONObject(response);
-				this.id=jsonResponse.getInt("id");
-				this.slug=jsonResponse.getString("slug");
+				this.fromJSON(jsonResponse);
 			} catch (Exception e) {
 				throw new LookerException(e.getMessage(),e);
 			}
@@ -195,8 +201,12 @@ public class Query implements Closeable {
 		clearCachedResults();
 	}
 	private void fromJSON(JSONObject json){
+		this.id=json.getInt("id");
+		this.slug=json.getString("slug");
 		this.model=json.getString("model");
 		this.view=json.getString("view");
+		if(!json.isNull("vis_config"))
+			this.visConfig = json.getJSONObject("vis_config");
 		if(!json.isNull("filters")) {
 			this.filters = json.getJSONObject("filters");
 		}
@@ -229,6 +239,7 @@ public class Query implements Closeable {
 		json.put("filters", this.filters);
 		json.put("sorts", this.sorts);
 		json.put("limit", this.limit);
+		json.put("vis_config", this.visConfig);
 		return json;
 	}
 	public String toString(){

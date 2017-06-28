@@ -107,7 +107,8 @@ public class Looker implements Closeable {
 	public Query getQueryById(int id) throws LookerException {
 		throwIfClosed();
 		for (Query q: queries){
-			return q;
+			if(q.getId() == id)
+				return q;
 		}
 		return Query.getQueryById(this.getAccessToken(), this.endpointLocation, id);
 	}
