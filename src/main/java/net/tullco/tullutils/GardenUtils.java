@@ -20,7 +20,7 @@ public final class GardenUtils {
 	private static final String KEYRING_LOCATION = "q?model=keyrings&name=e%s";
 	private static final String KEY_LOCATION = "keys?ids=%s";
 	
-	private final static JSONObject getKeyring(String keyring) throws IOException,UnconfiguredException{
+	public final static JSONObject getKeyring(String keyring) throws IOException,UnconfiguredException{
 		try{
 			String apiKey = Configuration.getConfiguration("GARDEN_API_KEY");
 			String keyringURL = String.format(GARDEN_URL+KEYRING_LOCATION,keyring);
