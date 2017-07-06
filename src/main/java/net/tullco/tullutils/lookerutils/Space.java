@@ -42,32 +42,57 @@ public class Space {
 	private Set<Look> looks;
 	private Set<Dashboard> dashboards;
 	
-	public Space(String accessToken, String apiEndpoint){
+	protected Space(String accessToken, String apiEndpoint){
 		this.apiEndpoint=apiEndpoint;
 		this.accessToken=accessToken;
 		this.looks=new HashSet<Look>();
 		this.dashboards=new HashSet<Dashboard>();
 		this.id=0;
 	}
-	public Space(JSONObject json, String accessToken, String apiEndpoint){
+	protected Space(JSONObject json, String accessToken, String apiEndpoint){
 		this(accessToken, apiEndpoint);
 		this.fromJSON(json);
 	}
+	/**
+	 * Gets the id of the parent space.
+	 * @return The id of the parent space.
+	 */
 	public int getParentId(){
 		return this.parentId;
 	}
+	/**
+	 * Sets the parent ID.
+	 * @param parentId The ID of the new parent space.
+	 */
 	public void setParentId(int parentId){
 		this.parentId=parentId;
 	}
+	/**
+	 * Sets the parent name.
+	 * @param name The new name for the space.
+	 */
 	public void setName(String name){
 		this.name=name;
 	}
+	/**
+	 * Gets the id.
+	 * @return The id.
+	 */
 	public int getId(){
 		return this.id;
 	}
+	/**
+	 * Return all the looks in the space.
+	 * @return A set containing the looks in the space.
+	 */
 	public Set<Look> getLooks(){
 		return this.looks;
 	}
+	/**
+	 * Get all spaces in this space.
+	 * @return A set containing the subspaces.
+	 * @throws LookerException If there was a problem fetching the child spaces
+	 */
 	public Set<Space> getSubspaces() throws LookerException{
 		Set<Space> subspaces = new HashSet<Space>();
 		String url = this.apiEndpoint + SEARCH_SPACE_URL+"?parent_id="+this.id;
@@ -82,18 +107,38 @@ public class Space {
 		}
 		return subspaces;
 	}
+	/**
+	 * Creates a dashboard in the space. Also saves the space.
+	 * @param title The dashboard Title
+	 * @return The newly created dashboard. It will be saved.
+	 * @throws LookerException If the dashboard could not be created or the space couldn't be saved.
+	 */
 	public Dashboard createDashboard(String title) throws LookerException{
 		this.save();
 		Dashboard d = Dashboard.getNewDashboard(id, title, accessToken, apiEndpoint);
 		refresh();
 		return d;
 	}
+	/**
+	 * Creates a look in the space. Also saves the space.
+	 * @param title The look title.
+	 * @param queryId The id of the query backing the look
+	 * @return The look that was created.
+	 * @throws LookerException If the look couldn't be created or the space couldn't be saved.
+	 */
 	public Look createLook(String title, int queryId) throws LookerException{
 		this.save();
 		Look l = Look.getNewLook(accessToken, apiEndpoint, title, this, queryId);
 		refresh();
 		return l;
 	}
+	/**
+	 * Creates a look in the space. Also saves the space.
+	 * @param title The look title.
+	 * @param q The query backing the look
+	 * @return The look that was created.
+	 * @throws LookerException If the look couldn't be created or the space couldn't be saved.
+	 */
 	public Look createLook(String title, Query q) throws LookerException{
 		return this.createLook(title, q.getId());
 	}
@@ -135,9 +180,17 @@ public class Space {
 			}
 		}
 	}
+	/**
+	 * Refreshes the space to the configuration on the server.
+	 * @throws LookerException If the new configuration could not be fetched.
+	 */
 	public void refresh() throws LookerException{
 		this.fromJSON(getSpaceJSONById(accessToken, apiEndpoint, this.id));
 	}
+	/**
+	 * Saves changes to the space.
+	 * @throws LookerException If the space could not be saved.
+	 */
 	public void save() throws LookerException{
 		try{
 			if(this.id==0)
@@ -174,6 +227,10 @@ public class Space {
 		json.put("id", this.id);
 		return json;
 	}
+	/**
+	 * Converts the space to JSON.
+	 * @return A JSONObject containing the space data.
+	 */
 	public JSONObject toJSON(){
 		JSONObject json = toEditJSON();
 		json.put("creator_id", this.creatorId);

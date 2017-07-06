@@ -41,7 +41,7 @@ public class Query implements Closeable {
 	public static OutputType CSV = OutputType.CSV;
 	public static OutputType JSON = OutputType.JSON;
 	
-	public Query(String accessToken, String endpointLocation){
+	protected Query(String accessToken, String endpointLocation){
 		this.accessToken = accessToken;
 		this.endpointLocation = endpointLocation;
 		this.fields=new ArrayList<String>();
@@ -51,11 +51,15 @@ public class Query implements Closeable {
 		this.visConfig=new JSONObject();
 	}
 	
-	public Query(JSONObject json, String accessToken, String endpointLocation){
+	protected Query(JSONObject json, String accessToken, String endpointLocation){
 		this(accessToken, endpointLocation);
 		this.fromJSON(json);
 	}
 	
+	/**
+	 * Sets the visualization configuration.
+	 * @param json The JSON containing the visualization configuration.
+	 */
 	public void setVisualization(JSONObject json){
 		this.visConfig=json;
 	}

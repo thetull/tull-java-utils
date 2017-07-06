@@ -51,23 +51,46 @@ public class Dashboard {
 		this.title=title;
 		this.spaceId=spaceId;
 	}
-	public Dashboard(String title, Space space, String accessToken, String apiEndpoint){
+	protected Dashboard(String title, Space space, String accessToken, String apiEndpoint){
 		this(title,space.getId(),accessToken,apiEndpoint);
 	}
+	/**
+	 * Gets the backing list of elements. Adding to this list will not result in things getting updated.
+	 * @return The list of elements backing this dashboard.
+	 */
 	public List<DashboardElement> getElements(){
 		return this.elements;
 	}
+	/**
+	 * Returns the id of the dashboard. If this dashboard is new and hasn't been saved, it will be 0.
+	 * @return The id of the dashboard. 0 if unassigned.
+	 */
 	public int getId(){
 		return id;
 	}
+	/**
+	 * Adds a look to the dashboard.
+	 * @param look The look object you want to add.
+	 * @throws LookerException If there was a problem adding it to the dashboard.
+	 */
 	public void addLook(Look look) throws LookerException {
 		this.addLook(look.getId());
 	}
+	/**
+	 * Adds a look to the dashboard. This saves the dashboard, and will also immediately save the addition of the look.
+	 * @param look The id of the look you want to add.
+	 * @throws LookerException If there was a problem adding it to the dashboard.
+	 */
 	public void addLook(int lookId) throws LookerException{
+		this.save();
 		DashboardElement e = new DashboardElement(this.id, lookId, "vis", this.accessToken, this.apiEndpoint);
 		e.save();
 		this.elements.add(e);
 	}
+	/**
+	 * Saves any changes to the dashboard and acquires an ID if it is new.
+	 * @throws LookerException If the dashboard could not be saved.
+	 */
 	public void save() throws LookerException{
 		try{
 			if(this.id==0)
@@ -120,6 +143,10 @@ public class Dashboard {
 			}
 		}
 	}
+	/**
+	 * Converts the dashboard to JSON.
+	 * @return A JSONObject containing the dashboard data.
+	 */
 	public JSONObject toJSON(){
 		JSONObject json = toEditJSON();
 		json.put("content_metadata_id", this.contentMetadataId);

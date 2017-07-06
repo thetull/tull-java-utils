@@ -46,38 +46,83 @@ public class Look {
 		this(accessToken, apiEndpoint);
 		this.fromJSON(json);
 	}
+	/**
+	 * Gets the ID of the dashboard element.
+	 * @return The ID of the dashboard element. 
+	 */
 	public int getId(){
 		return this.id;
 	}
+	/**
+	 * Gets the title of the Look.
+	 * @return A String title of the Look.
+	 */
 	public String getTitle(){
 		return this.title;
 	}
+	/**
+	 * Sets the title of the dashboard element.
+	 * @param title The new title. 
+	 */
 	public void setTitle(String title){
 		this.title=title;
 	}
+	/**
+	 * Gets the ID of the containing space.
+	 * @return The space id.
+	 */
 	public int getSpaceId(){
 		return this.spaceId;
 	}
+	/**
+	 * Sets the ID of the containing space.
+	 * @param id The new space ID.
+	 */
 	public void setSpaceId(int id){
 		this.spaceId=id;
 	}
+	/**
+	 * Sets the containing space.
+	 * @param s The new space.
+	 */
 	public void setSpace(Space s){
 		this.spaceId=s.getId();
 	}
+	/**
+	 * Gets the query Id of the backing query.
+	 * @return The id of the backing query.
+	 */
 	public int getQueryId(){
 		return this.queryId;
 	}
+	/**
+	 * Gets the backing query.
+	 * @return The backing query.
+	 */
 	public Query getQuery(){
 		return this.query;
 	}
+	/**
+	 * Sets the query.
+	 * @param id The id of the query.
+	 * @throws LookerException If the query with the given ID doesn't exist.
+	 */
 	public void setQueryId(int id) throws LookerException{
 		this.queryId=id;
 		this.query = Query.getQueryById(this.accessToken, this.apiEndpoint, id);
 	}
+	/**
+	 * Sets the query.
+	 * @param q The query object
+	 */
 	public void setQuery(Query q){
 		this.queryId=q.getId();
 		this.query=q;
 	}
+	/**
+	 * Saves the Look and any changes. Will acquire an ID if it is new.
+	 * @throws LookerException If the look couldn't be saved.
+	 */
 	public void save() throws LookerException{
 		try{
 			if(this.id==0)
@@ -129,6 +174,10 @@ public class Look {
 		if(!json.isNull("query"))
 			this.query=new Query(json.getJSONObject("query"),this.accessToken,this.apiEndpoint);
 	}
+	/**
+	 * Converts the look to JSON.
+	 * @return A JSONObject containing the look attributes.
+	 */
 	public JSONObject toJSON(){
 		JSONObject json = toEditJSON();
 		json.put("content_metadata_id", this.contentMetadataId);

@@ -28,42 +28,65 @@ public class DashboardElement {
 	private final String accessToken;
 	private final String apiEndpoint;
 
-	private DashboardElement(String accessToken, String apiEndpoint){
+	protected DashboardElement(String accessToken, String apiEndpoint){
 		this.accessToken=accessToken;
 		this.apiEndpoint=apiEndpoint;
 	}
-	public DashboardElement(JSONObject json, String accessToken, String apiEndpoint) {
+	protected DashboardElement(JSONObject json, String accessToken, String apiEndpoint) {
 		this(accessToken, apiEndpoint);
 		fromJSON(json);
 	}
-	public DashboardElement(int dashboardId, int lookId, String type, String accessToken, String apiEndpoint){
+	protected DashboardElement(int dashboardId, int lookId, String type, String accessToken, String apiEndpoint){
 		this(accessToken, apiEndpoint);
 		this.dashboardId=dashboardId;
 		this.lookId=lookId;
 		this.type=type;
 	}
+	/**
+	 * Gets the ID of the dashboard element.
+	 * @return The ID of the dashboard element. 
+	 */
 	public int getId(){
 		return this.id;
 	}
+	/**
+	 * Gets the dashboard id.
+	 * @return The id of the dashboard.
+	 */
 	public int getDashboardId(){
 		return this.dashboardId;
 	}
+	/**
+	 * Gets the id of the relevant look.
+	 * @return The id of the look.
+	 */
 	public int getLookId(){
 		return this.lookId;
 	}
+	/**
+	 * Set's the dashboard that the look is attached to.
+	 * @param dashboardId The id of the dashboard.
+	 */
 	public void setDashboardId(int dashboardId){
 		this.dashboardId=dashboardId;
 	}
+	/**
+	 * Set's the id of the look that this dashboard is using.
+	 * @param lookId The id of the look.
+	 */
 	public void setLookId(int lookId){
 		this.lookId=lookId;
 	}
-	public void fromJSON(JSONObject json){
+	private void fromJSON(JSONObject json){
 		id = json.getInt("id");
 		dashboardId=json.getInt("dashboard_id");
 		lookId=json.getInt("look_id");
 		type=json.getString("type");
 	}
-
+	/**
+	 * Saves the dashboard element to Looker.
+	 * @throws LookerException If the saving was unsuccessful.
+	 */
 	public void save() throws LookerException{
 		try{
 			if(this.id==0)
@@ -90,18 +113,22 @@ public class DashboardElement {
 		JSONObject json = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
 		this.fromJSON(json);
 	}
-	public JSONObject toCreateJSON(){
+	protected JSONObject toCreateJSON(){
 		JSONObject json = new JSONObject();
 		json.put("look_id", lookId);
 		json.put("dashboard_id",dashboardId);
 		json.put("type", this.type);
 		return json;
 	}
-	public JSONObject toEditJSON(){
+	protected JSONObject toEditJSON(){
 		JSONObject json = toCreateJSON();
 		json.put("id", this.id);
 		return json;
 	}
+	/**
+	 * Converts the element to JSON.
+	 * @return A JSONObject containing the element data.
+	 */
 	public JSONObject toJSON() {
 		JSONObject json = toEditJSON();
 		return json;		

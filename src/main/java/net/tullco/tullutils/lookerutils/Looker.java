@@ -112,25 +112,59 @@ public class Looker implements Closeable {
 		}
 		return Query.getQueryById(this.getAccessToken(), this.endpointLocation, id);
 	}
+	/**
+	 * Gets a new query attached to this endpoint.
+	 * @return A new, empty query object
+	 * @throws LookerException If a new query could not be obtained.
+	 */
 	public Query getNewQuery() throws LookerException{
 		return new Query(this.getAccessToken(), this.endpointLocation);
 	}
+	/**
+	 * Gets the look with the given ID.
+	 * @param id The ID of the desired look.
+	 * @return The look with the given ID.
+	 * @throws LookerException If the look could not be fetched.
+	 */
 	public Look getLookById(int id) throws LookerException {
 		return Look.getLookById(this.getAccessToken(), this.endpointLocation, id);
 	}
-	
+	/**
+	 * Creates a new look with the given information. It will be unsaved when returned.
+	 * @param title The title of the new look.
+	 * @param space The space the look will be contained in.
+	 * @param queryId The query id.
+	 * @return The created look.
+	 * @throws LookerException If the look could not be created.
+	 */
 	public Look createNewLook(String title, Space space, int queryId) throws LookerException{
 		return Look.getNewLook(getAccessToken(), this.endpointLocation, title, space, queryId);
 	}
-	
+	/**
+	 * Gets the dashboard with the given ID.
+	 * @param id The ID of the desired look.
+	 * @return The dashboard.
+	 * @throws LookerException If the dashboard could not be fetched.
+	 */
 	public Dashboard getDashboardById(int id) throws LookerException {
 		return Dashboard.getDashboardById(id, getAccessToken(), this.endpointLocation);
 	}
-	
+	/**
+	 * Gets the space with the given ID.
+	 * @param id The ID of the space.
+	 * @return The space.
+	 * @throws LookerException If the space could not be fetched.
+	 */
 	public Space getSpaceById(int id) throws LookerException {
 		return Space.getSpaceById(this.getAccessToken(), this.endpointLocation, id);
 	}
-	
+	/**
+	 * Creates a new space. It will be saved.
+	 * @param name The name of the new space
+	 * @param parentSpaceId The id of the containing space.
+	 * @return The space.
+	 * @throws LookerException If the space could not be created.
+	 */
 	public Space createNewSpace(String name, int parentSpaceId) throws LookerException{
 		return Space.createNewSpace(getAccessToken(), this.endpointLocation, name, parentSpaceId);
 	}
