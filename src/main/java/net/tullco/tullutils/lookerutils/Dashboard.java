@@ -78,7 +78,7 @@ public class Dashboard {
 	}
 	/**
 	 * Adds a look to the dashboard. This saves the dashboard, and will also immediately save the addition of the look.
-	 * @param look The id of the look you want to add.
+	 * @param lookId The id of the look you want to add.
 	 * @throws LookerException If there was a problem adding it to the dashboard.
 	 */
 	public void addLook(int lookId) throws LookerException{
