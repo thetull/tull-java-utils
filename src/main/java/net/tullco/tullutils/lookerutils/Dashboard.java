@@ -88,6 +88,17 @@ public class Dashboard {
 		this.elements.add(e);
 	}
 	/**
+	 * Adds a text element to the dashboard
+	 * @param text The text the element should contain
+	 * @throws LookerException If the text element couldn't be added.
+	 */
+	public void addTextElement(String text) throws LookerException {
+		this.save();
+		DashboardElement e = new DashboardElement(this.id,text,this.accessToken,this.apiEndpoint);
+		e.save();
+		this.elements.add(e);
+	}
+	/**
 	 * Saves any changes to the dashboard and acquires an ID if it is new.
 	 * @throws LookerException If the dashboard could not be saved.
 	 */

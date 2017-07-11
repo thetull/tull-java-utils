@@ -24,6 +24,7 @@ public class DashboardElement {
 	private int dashboardId;
 	private int lookId;
 	private String type;
+	private String titleText;
 	
 	private final String accessToken;
 	private final String apiEndpoint;
@@ -41,6 +42,12 @@ public class DashboardElement {
 		this.dashboardId=dashboardId;
 		this.lookId=lookId;
 		this.type=type;
+	}
+	protected DashboardElement(int dashboardId, String titleText, String accessToken, String apiEndpoint){
+		this(accessToken, apiEndpoint);
+		this.titleText=titleText;
+		this.dashboardId=dashboardId;
+		this.type="text";
 	}
 	/**
 	 * Gets the ID of the dashboard element.
@@ -80,8 +87,11 @@ public class DashboardElement {
 	private void fromJSON(JSONObject json){
 		id = json.getInt("id");
 		dashboardId=json.getInt("dashboard_id");
-		lookId=json.getInt("look_id");
+		if(!json.isNull("look_id"))
+			lookId=json.getInt("look_id");
 		type=json.getString("type");
+		if(!json.isNull("title_text"))
+			titleText=json.getString("title_text");
 	}
 	/**
 	 * Saves the dashboard element to Looker.
@@ -115,9 +125,11 @@ public class DashboardElement {
 	}
 	protected JSONObject toCreateJSON(){
 		JSONObject json = new JSONObject();
-		json.put("look_id", lookId);
+		if(this.lookId!=0)
+			json.put("look_id", lookId);
 		json.put("dashboard_id",dashboardId);
 		json.put("type", this.type);
+		json.put("title_text", titleText);
 		return json;
 	}
 	protected JSONObject toEditJSON(){
