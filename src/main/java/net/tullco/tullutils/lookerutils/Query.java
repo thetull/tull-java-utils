@@ -26,6 +26,7 @@ public class Query implements Closeable {
 	private File csvResults;
 	private String model;
 	private String view;
+	private String dynamicFields;
 	private int limit = 500;
 	private ArrayList<String> fields;
 	private ArrayList<String> pivots;
@@ -164,6 +165,14 @@ public class Query implements Closeable {
 		clearCachedResults();
 	}
 	/**
+	 * Sets the dynamic fields for the query.
+	 * @param dynamicFields The dynamic field configuration
+	 */
+	public void setDynamicFields(String dynamicFields){
+		this.dynamicFields = dynamicFields;
+		clearCachedResults();
+	}
+	/**
 	 * Sets the limit. Default is 50
 	 * @param limit The new limit for the query.
 	 */
@@ -244,6 +253,7 @@ public class Query implements Closeable {
 		json.put("sorts", this.sorts);
 		json.put("limit", this.limit);
 		json.put("vis_config", this.visConfig);
+		json.put("dynamic_fields", this.dynamicFields);
 		return json;
 	}
 	public String toString(){
