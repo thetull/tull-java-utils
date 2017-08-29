@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import net.tullco.tullutils.FileUtils;
 import net.tullco.tullutils.NetworkUtils;
+import net.tullco.tullutils.NullUtils;
 import net.tullco.tullutils.Pair;
 import net.tullco.tullutils.exceptions.LookerException;
 
@@ -33,6 +34,7 @@ public class Query implements Closeable {
 	private ArrayList<String> sorts;
 	private JSONObject filters;
 	private JSONObject visConfig;
+	private boolean hasTableCalculations=false;
 	private final static String GET_QUERY_ID_URL="queries/%d";
 	private final static String GET_QUERY_SLUG_URL="queries/slug/%s";
 	private final static String CREATE_QUERY_URL="queries";
@@ -170,6 +172,7 @@ public class Query implements Closeable {
 	 */
 	public void setDynamicFields(String dynamicFields){
 		this.dynamicFields = dynamicFields;
+		this.hasTableCalculations = true;
 		clearCachedResults();
 	}
 	/**
@@ -218,6 +221,10 @@ public class Query implements Closeable {
 		this.slug=json.getString("slug");
 		this.model=json.getString("model");
 		this.view=json.getString("view");
+		if(!json.isNull("dynamic_fields"))
+			this.dynamicFields = json.getString("dynamic_fields");
+		if(!json.isNull("has_table_calculations"))
+			this.hasTableCalculations = json.getBoolean("has_table_calculations");
 		if(!json.isNull("vis_config"))
 			this.visConfig = json.getJSONObject("vis_config");
 		if(!json.isNull("filters")) {
@@ -253,6 +260,7 @@ public class Query implements Closeable {
 		json.put("sorts", this.sorts);
 		json.put("limit", this.limit);
 		json.put("vis_config", this.visConfig);
+		json.put("has_table_calculation", this.hasTableCalculations);
 		json.put("dynamic_fields", this.dynamicFields);
 		return json;
 	}
@@ -290,6 +298,7 @@ public class Query implements Closeable {
 					,true
 					,NetworkUtils.GET
 					,Pair.<String,String>of("Authorization", "Bearer "+accessToken));
+			System.out.println(queryString);
 			JSONObject json = new JSONObject(queryString);
 			Query q = new Query(accessToken,endpointLocation);
 			q.fromJSON(json);
