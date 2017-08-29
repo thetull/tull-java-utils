@@ -2,12 +2,17 @@ package net.tullco.tullutils;
 
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.Scanner;
 
 import com.opencsv.CSVWriter;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -165,10 +170,12 @@ public class SQLUtil implements Closeable {
 							rsmd.getColumnType(i)==Types.NUMERIC ||
 							rsmd.getColumnType(i)==Types.REAL){
 						rowData[i-1] = Double.toString(rs.getDouble(i));
+						continue;
 					}
 					else if(rsmd.getColumnType(i)==Types.VARCHAR ||
 							rsmd.getColumnType(i)==Types.BLOB ||
-							rsmd.getColumnType(i)==Types.CHAR){
+							rsmd.getColumnType(i)==Types.CHAR ||
+							rsmd.getColumnType(i)==Types.SQLXML){
 						rowData[i-1] = rs.getString(i);
 						continue;
 					}
@@ -179,14 +186,17 @@ public class SQLUtil implements Closeable {
 					}
 					else if(rsmd.getColumnType(i)==Types.DATE){
 						rowData[i-1] = rs.getDate(i).toString();
+						continue;
 					}
 					else if(rsmd.getColumnType(i)==Types.TIME ||
 						rsmd.getColumnType(i)==Types.TIME_WITH_TIMEZONE){
 						rowData[i-1] = rs.getTime(i).toString();
+						continue;
 					}
 					else if(rsmd.getColumnType(i)==Types.TIMESTAMP ||
 							rsmd.getColumnType(i)==Types.TIMESTAMP_WITH_TIMEZONE){
 						rowData[i-1] = rs.getTimestamp(i).toString();
+						continue;
 					}
 					else{
 						throw new SQLException("CSV Method does not support the data type "+rsmd.getColumnTypeName(i)+".");
