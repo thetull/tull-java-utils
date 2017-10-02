@@ -200,7 +200,6 @@ public class SQLUtil implements Closeable {
 			}
 			writer.writeNext(rowData);
 		}
-		//writer.flush();
 		rs.close();
 	}
 	/**
