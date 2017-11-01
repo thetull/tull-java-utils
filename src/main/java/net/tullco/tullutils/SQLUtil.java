@@ -1,10 +1,5 @@
 package net.tullco.tullutils;
 
-import java.sql.Statement;
-import java.sql.Types;
-
-import com.opencsv.CSVWriter;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +7,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.StringJoiner;
+
+import com.opencsv.CSVWriter;
 
 /**
  * A JDBC connection wrapper that abstracts away some of the complexities of querying for most use cases.
@@ -146,6 +146,49 @@ public class SQLUtil implements Closeable {
 			currentStart+=chunkSize;
 			currentEnd+=chunkSize;
 		}while(maxRunId<maxId);
+	}
+	
+	/**
+	 * Splits the query into smaller chunks. All IDs in the given list will be run and the results will be output to the given file as a CSV
+	 * @param statement The SQL string you want to chunk. Assure it has idString in the appropriate location.
+	 * @param idString The string to replace with comma separated ids.
+	 * @param ids An iterable containing the IDs that you want to run.
+	 * @param chunkSize The size of the chunks you want to run.
+	 * @param f The File/Directory you want to output to.
+	 * @throws SQLException If there is an SQLException while running the query.
+	 * @throws IOException If there is an IOException writing to the file.
+	 */
+	public void chunkifyQueryByIdCSV(String statement, String idString, Iterable<? extends String> ids, int chunkSize, File f) throws SQLException, IOException{
+		StringJoiner joiner = new StringJoiner(",");
+		int elements = 0;
+		int chunks = 1;
+		boolean firstRun = true;
+		for(String id: ids){
+			joiner.add(id);
+			elements++;
+			if(elements >= chunkSize){
+				System.out.println("Running chunk #" + chunks);
+				String chunkedQuery = statement.replace(idString,joiner.toString());
+				if(firstRun){
+					getResultsAsCSV(f,chunkedQuery);
+					firstRun = false;
+				}else{
+					appendResultsToCSV(f, chunkedQuery);
+				}
+				joiner = new StringJoiner(",");
+				elements = 0;
+				chunks++;
+			}
+		}
+		if(elements >=0){
+			System.out.println("Running last chunk #" + chunks);
+			String chunkedQuery = statement.replace(idString,joiner.toString());
+			if(firstRun){
+				getResultsAsCSV(f,chunkedQuery);
+			}else{
+				appendResultsToCSV(f, chunkedQuery);
+			}
+		}
 	}
 	private void writeResultSetToCSV(CSVWriter writer, ResultSet rs) throws SQLException, IOException{
 		ResultSetMetaData rsmd = rs.getMetaData();
