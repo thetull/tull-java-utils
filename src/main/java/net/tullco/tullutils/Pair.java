@@ -2,8 +2,8 @@ package net.tullco.tullutils;
 
 public class Pair<T,U> {
 	
-	T left;
-	U right;
+	private T left;
+	private U right;
 	
 	private Pair(T left, U right){
 		this.left=left;
