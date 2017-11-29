@@ -86,8 +86,8 @@ public final class NetworkUtils {
 			c.setRequestProperty("Content-Type", this.getContentType());
 		}
 		for(Pair<String,String> p: this.getHeaders()){
-			if(!p.left.equals("Content-Type")) {
-				c.setRequestProperty(p.left,p.right);
+			if(!p.left().equals("Content-Type")) {
+				c.setRequestProperty(p.left(),p.right());
 			}
 		}
 		return c;

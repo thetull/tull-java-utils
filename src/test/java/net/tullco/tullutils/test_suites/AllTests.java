@@ -10,6 +10,7 @@ import net.tullco.tullutils.test_classes.ListUtilsTest;
 import net.tullco.tullutils.test_classes.MergeUtilsTest;
 import net.tullco.tullutils.test_classes.NullUtilsTest;
 import net.tullco.tullutils.test_classes.PairTest;
+import net.tullco.tullutils.test_classes.StopwatchTest;
 import net.tullco.tullutils.test_classes.StringUtilsTest;
 
 @RunWith(Suite.class)
@@ -20,7 +21,9 @@ import net.tullco.tullutils.test_classes.StringUtilsTest;
 	,NullUtilsTest.class
 	,PairTest.class
 	,StringUtilsTest.class
-	,ListUtilsTest.class })
+	,ListUtilsTest.class
+	,StopwatchTest.class
+	})
 public class AllTests {
 
 }
