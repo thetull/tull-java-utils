@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,16 +15,25 @@ import net.tullco.tullutils.exceptions.UnconfiguredException;
 
 public final class GardenUtils {
 
-	private static HashMap<String,Connection> connectionCache = new HashMap<String,Connection>();
+	private static HashMap<String,JSONObject> keyringCache = new HashMap<String,JSONObject>();
 	
-	private static final String GARDEN_URL = "https://garden2.ds.avant.com/";
 	private static final String KEYRING_LOCATION = "q?model=keyrings&name=e%s";
 	private static final String KEY_LOCATION = "keys?ids=%s";
 	
+	/**
+	 * Gets the JSON keyring of the connection.
+	 * @param keyring The name of the keyring you want to fetch.
+	 * @return A JSON representation of they keyring from the garden server.
+	 * @throws IOException If a network problem happens
+	 * @throws UnconfiguredException If the value GARDEN_API_KEY or GARDEN_URL is not configured in the Configuration class.
+	 */
 	public final static JSONObject getKeyring(String keyring) throws IOException,UnconfiguredException{
+		if (keyringCache.containsKey(keyring))
+			return keyringCache.get(keyring);
 		try{
 			String apiKey = Configuration.getConfiguration("GARDEN_API_KEY");
-			String keyringURL = String.format(GARDEN_URL+KEYRING_LOCATION,keyring);
+			String gardenURL = Configuration.getConfiguration("GARDEN_URL");
+			String keyringURL = String.format(gardenURL+KEYRING_LOCATION,keyring);
 			String keyringResponse = NetworkUtils.getDataFromURL(
 					keyringURL, true, NetworkUtils.GET, Pair.<String,String>of("Authorization",apiKey));
 			
@@ -31,16 +41,35 @@ public final class GardenUtils {
 			JSONArray keyIds = keyringResponseJson.getJSONArray("result").getJSONObject(0).getJSONArray("keys");
 			String keyIdString = keyIds.toString().replace("[", "").replace("]", "");
 	
-			String keyURL = String.format(GARDEN_URL+KEY_LOCATION,keyIdString);
+			String keyURL = String.format(gardenURL+KEY_LOCATION,keyIdString);
 			String keysResponse = NetworkUtils.getDataFromURL(
 					keyURL, true, NetworkUtils.GET, Pair.<String,String>of("Authorization",apiKey));
 			
 			JSONObject keysResponseJson = new JSONObject(keysResponse);
+			keyringCache.put(keyring, keysResponseJson);
 
 			return keysResponseJson;
 		}catch(MalformedURLException e){
 			return null;
 		}
+	}
+	
+	/**
+	 * Gets the keys on a given keyring in a map with the keys being the name field and the values being the value field.
+	 * @param keyring The name of the keyring you want to fetch.
+	 * @return A map containing the keys and values
+	 * @throws IOException If a network problem happens
+	 * @throws UnconfiguredException If the value GARDEN_API_KEY or GARDEN_URL is not configured in the Configuration class.
+	 */
+	public final static Map<String,String> getKeyMap(String keyring) throws IOException, UnconfiguredException{
+		JSONArray keyValues = GardenUtils.getKeyring(keyring).getJSONArray("result");
+		Map<String,String> keyMap = new HashMap<String,String>();
+		for (int i=0; i < keyValues.length(); i++){
+			String name = keyValues.getJSONObject(i).getString("name");
+			String value = keyValues.getJSONObject(i).getString("value");
+			keyMap.put(name, value);
+		}
+		return keyMap;
 	}
 	
 	/**
@@ -50,44 +79,46 @@ public final class GardenUtils {
 	 * @return A connection to the given resource
 	 * @throws IOException If a network problem happens
 	 * @throws SQLException If an SQL problem happens
-	 * @throws UnconfiguredException If the value GARDEN_API_KEY is not configured in the Util configuration class.
+	 * @throws UnconfiguredException If the value GARDEN_API_KEY or GARDEN_URL is not configured in the Configuration class.
 	 */
 	public final static Connection getPgConnectionFromGarden(String keyring) throws IOException, SQLException, UnconfiguredException {
-		if(connectionCache.containsKey(keyring) && !connectionCache.get(keyring).isClosed())
-			return connectionCache.get(keyring);
-		JSONObject keys = getKeyring(keyring);
-		JSONArray keyValueArray = keys.getJSONArray("result");
+		Map<String,String> keyValues = getKeyMap(keyring);
 		
-		String username=null;
-		String password=null;
-		String database=null;
-		String type=null;
-		String host=null;
-		String port=null;
-		
-		
-		for(Object o : keyValueArray){
-			JSONObject item = (JSONObject) o;
-			String name = item.getString("name");
-			if(name.equals("user"))
-				username=item.getString("value");
-			if(name.equals("password"))
-				password=item.getString("value");
-			if(name.equals("database"))
-				database=item.getString("value");
-			if(name.equals("type"))
-				type=item.getString("value");
-			if(name.equals("host"))
-				host=item.getString("value");
-			if(name.equals("port"))
-				port=item.getString("value");
-		}
+		String username = keyValues.get("user");
+		String password = keyValues.get("password");
+		String database = keyValues.get("database");
+		String type = keyValues.get("type");
+		String host = keyValues.get("host");
+		String port = keyValues.get("port");
+
 		if (!type.equals("postgres"))
 			return null;
 		
 		String jdbcURL="jdbc:postgresql://"+host+"/"+database+":"+port+"?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
 		Connection c = DriverManager.getConnection(jdbcURL, username, password);
-		connectionCache.put(keyring, c);
+		return c;
+	}
+	
+	/**
+	 * Connects to a presto keyring.
+	 * @param keyring The name of the keyring of the given resource.
+	 * @param trustStoreLocation The location of the truststore containing the ssl certificate
+	 * @param trustStorePassword The password to the truststore containing the ssl certificate
+	 * @return A JDBC connection to the Presto database at the keyring specified
+	 * @throws IOException If a network problem happens
+	 * @throws SQLException If an SQL problem happens
+	 * @throws UnconfiguredException If the value GARDEN_API_KEY or GARDEN_URL is not configured in the Configuration class.
+	 */
+	public final static Connection getPrestoConnection(String keyring, String trustStoreLocation, String trustStorePassword) throws UnconfiguredException, IOException, SQLException{
+		Map<String,String> prestoKeys = getKeyMap(keyring);
+		String jdbcURL = String.format("jdbc:presto://%s:%s/%s/dw?SSL=true&user=%s&SSLTrustStorePath=%s&SSLTrustStorePassword=%s"
+				,prestoKeys.get("host")
+				,prestoKeys.get("port")
+				,prestoKeys.get("database")
+				,"username"
+				,trustStoreLocation
+				,trustStorePassword);
+		Connection c = DriverManager.getConnection(jdbcURL);
 		return c;
 	}
 }
