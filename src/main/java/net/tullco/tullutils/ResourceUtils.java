@@ -7,7 +7,7 @@ import java.net.URL;
 public class ResourceUtils {
 
 	public static String getAbsoluteResourcePath(Class<? extends Object> resourceClass, String resourcePath){
-		return ResourceUtils.getResourceURL(resourceClass,resourcePath).toExternalForm();
+		return ResourceUtils.getResourceURL(resourceClass,resourcePath).getFile();
 	}
 	public static File getResourceFile(Class<? extends Object> resourceClass,String resourcePath){
 		return new File(ResourceUtils.getAbsoluteResourcePath(resourceClass,resourcePath));
