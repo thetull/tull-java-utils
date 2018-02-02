@@ -11,9 +11,9 @@ This library is self-hosted, and not in maven central. To include it, add the fo
       <updatePolicy>always</updatePolicy>
       <checksumPolicy>fail</checksumPolicy>
     </releases>
-    <id>TullCo</id>
-    <name>TullcoRepo</name>
-    <url>http://tullco.net/maven2</url>
+    <id>Gearreald</id>
+    <name>GearrealdRepo</name>
+    <url>http://gearreald.com/maven2</url>
     <layout>default</layout>
   </repository>
 </repositories>
@@ -23,6 +23,6 @@ Then you can add the dependency with the following
 <dependency>
   <groupId>net.tullco</groupId>
   <artifactId>TullUtils</artifactId>
-  <version>0.10</version>
+  <version>0.14.2</version>
 </dependency>
 ```
