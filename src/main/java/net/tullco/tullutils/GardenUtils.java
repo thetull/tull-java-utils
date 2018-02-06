@@ -17,8 +17,7 @@ public final class GardenUtils {
 
 	private static HashMap<String,JSONObject> keyringCache = new HashMap<String,JSONObject>();
 	
-	private static final String KEYRING_LOCATION = "q?model=keyrings&name=e%s";
-	private static final String KEY_LOCATION = "keys?ids=%s";
+	private static final String KEYRING_LOCATION = "api/resources/%s";
 	
 	/**
 	 * Gets the JSON keyring of the connection.
@@ -35,20 +34,9 @@ public final class GardenUtils {
 			String gardenURL = Configuration.getConfiguration("GARDEN_URL");
 			String keyringURL = String.format(gardenURL+KEYRING_LOCATION,keyring);
 			String keyringResponse = NetworkUtils.getDataFromURL(
-					keyringURL, true, NetworkUtils.GET, Pair.<String,String>of("Authorization",apiKey));
-			
+					keyringURL, true, NetworkUtils.GET, Pair.<String,String>of("Authorization","Token token="+apiKey));
 			JSONObject keyringResponseJson = new JSONObject(keyringResponse);
-			JSONArray keyIds = keyringResponseJson.getJSONArray("result").getJSONObject(0).getJSONArray("keys");
-			String keyIdString = keyIds.toString().replace("[", "").replace("]", "");
-	
-			String keyURL = String.format(gardenURL+KEY_LOCATION,keyIdString);
-			String keysResponse = NetworkUtils.getDataFromURL(
-					keyURL, true, NetworkUtils.GET, Pair.<String,String>of("Authorization",apiKey));
-			
-			JSONObject keysResponseJson = new JSONObject(keysResponse);
-			keyringCache.put(keyring, keysResponseJson);
-
-			return keysResponseJson;
+			return keyringResponseJson;
 		}catch(MalformedURLException e){
 			return null;
 		}
@@ -62,11 +50,11 @@ public final class GardenUtils {
 	 * @throws UnconfiguredException If the value GARDEN_API_KEY or GARDEN_URL is not configured in the Configuration class.
 	 */
 	public final static Map<String,String> getKeyMap(String keyring) throws IOException, UnconfiguredException{
-		JSONArray keyValues = GardenUtils.getKeyring(keyring).getJSONArray("result");
+		JSONArray keyValues = GardenUtils.getKeyring(keyring).getJSONArray("keys");
 		Map<String,String> keyMap = new HashMap<String,String>();
 		for (int i=0; i < keyValues.length(); i++){
-			String name = keyValues.getJSONObject(i).getString("name");
-			String value = keyValues.getJSONObject(i).getString("value");
+			String name = keyValues.getJSONObject(i).optString("name");
+			String value = keyValues.getJSONObject(i).optString("value");
 			keyMap.put(name, value);
 		}
 		return keyMap;
