@@ -213,6 +213,8 @@ public class SQLUtil implements Closeable {
 					}
 					else if(rsmd.getColumnType(i)==Types.VARCHAR ||
 							rsmd.getColumnType(i)==Types.BLOB ||
+							rsmd.getColumnType(i)==Types.LONGNVARCHAR ||
+							rsmd.getColumnType(i)==Types.LONGVARCHAR ||
 							rsmd.getColumnType(i)==Types.CHAR ||
 							rsmd.getColumnType(i)==Types.SQLXML){
 						rowData[i-1] = rs.getString(i);
