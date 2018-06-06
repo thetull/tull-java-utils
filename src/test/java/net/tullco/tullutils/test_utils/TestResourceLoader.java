@@ -1,4 +1,4 @@
-package net.tullco.tullutils.test_classes;
+package net.tullco.tullutils.test_utils;
 
 import java.io.File;
 
