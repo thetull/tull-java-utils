@@ -15,6 +15,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import net.tullco.tullutils.FileUtils;
+import net.tullco.tullutils.test_utils.TestResourceLoader;
 
 public class FileUtilsTest {
 

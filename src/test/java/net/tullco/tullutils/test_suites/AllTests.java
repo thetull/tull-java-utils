@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import net.tullco.tullutils.test_classes.AESEncryptionTest;
 import net.tullco.tullutils.test_classes.FileUtilsTest;
 import net.tullco.tullutils.test_classes.GraphTest;
 import net.tullco.tullutils.test_classes.ListUtilsTest;
@@ -23,6 +24,7 @@ import net.tullco.tullutils.test_classes.StringUtilsTest;
 	,StringUtilsTest.class
 	,ListUtilsTest.class
 	,StopwatchTest.class
+	,AESEncryptionTest.class
 	})
 public class AllTests {
 

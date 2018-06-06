@@ -224,15 +224,15 @@ public class SQLUtil implements Closeable {
 						rowData[i-1] = Boolean.toString(rs.getBoolean(i));
 					}
 					else if(rsmd.getColumnType(i)==Types.DATE){
-						rowData[i-1] = rs.getDate(i).toString();
+						rowData[i-1] = rs.getDate(i).toLocalDate().toString();
 					}
 					else if(rsmd.getColumnType(i)==Types.TIME ||
 						rsmd.getColumnType(i)==Types.TIME_WITH_TIMEZONE){
-						rowData[i-1] = rs.getTime(i).toString();
+						rowData[i-1] = rs.getTime(i).toLocalTime().toString();
 					}
 					else if(rsmd.getColumnType(i)==Types.TIMESTAMP ||
 							rsmd.getColumnType(i)==Types.TIMESTAMP_WITH_TIMEZONE){
-						rowData[i-1] = rs.getTimestamp(i).toString();
+						rowData[i-1] = rs.getTimestamp(i).toLocalDateTime().toString();
 					}
 					else{
 						throw new SQLException("CSV Method does not support the data type "+rsmd.getColumnTypeName(i)+".");

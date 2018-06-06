@@ -12,6 +12,7 @@ import com.opencsv.CSVReader;
 
 import net.tullco.tullutils.FileUtils;
 import net.tullco.tullutils.MergeUtils;
+import net.tullco.tullutils.test_utils.TestResourceLoader;
 
 public class MergeUtilsTest {
 
