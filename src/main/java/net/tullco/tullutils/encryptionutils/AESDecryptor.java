@@ -89,8 +89,10 @@ public class AESDecryptor {
 	/**
 	 * Decrypt a byte array into a string. This function works best with smaller byte arrays.
 	 * @param b The byte array to decrypt
+	 * @param encoding The encoding to use in the decryption
 	 * @return A string containing the decrypted information.
 	 * @throws CryptException If the decryption failed
+	 * @throws UnsupportedEncodingException If the specified encoding is not supported
 	 */
 	public String decryptBytesToString(byte[] b, String encoding) throws CryptException, UnsupportedEncodingException {
 		return new String(decryptBytes(b), encoding);

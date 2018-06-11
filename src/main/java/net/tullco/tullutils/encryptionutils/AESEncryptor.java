@@ -90,9 +90,11 @@ public class AESEncryptor {
 	
 	/**
 	 * Encrypts the String.
-	 * @param b The string to encrypt
+	 * @param s The string to encrypt
+	 * @param encoding The string encoding to use in the encryption
 	 * @return The string encrypted as a byte array
-	 * @throws CryptException If there were any problems encrypting the string.
+	 * @throws CryptException If there were any problems encrypting the string
+	 * @throws UnsupportedEncodingException If the specified encoding is not supported
 	 */
 	public byte[] encryptString(String s, String encoding) throws CryptException, UnsupportedEncodingException {
 		return encryptBytes(s.getBytes(encoding));
