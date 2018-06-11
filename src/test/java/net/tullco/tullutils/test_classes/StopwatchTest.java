@@ -9,11 +9,8 @@ import net.tullco.tullutils.Stopwatch;
 
 public class StopwatchTest {
 
-	private static final long NANO_MILLI_CONVERSION = 1000000L;
-	private static final long TEST_TIME_PERIOD_MILLIS = 1000L;
-	private static final long TEST_TIME_PERIOD_NANOS = TEST_TIME_PERIOD_MILLIS * NANO_MILLI_CONVERSION;
+	private static final long TEST_TIME_PERIOD_MILLIS = 100L;
 	private static final long MILLI_BUFFER = 2L;
-	private static final long NANO_BUFFER = MILLI_BUFFER * NANO_MILLI_CONVERSION;
 	
 	private Stopwatch watch;
 	
@@ -25,31 +22,38 @@ public class StopwatchTest {
 	@Test
 	public void testStart() {
 		assertFalse(watch.isRunning());
+		assertEquals(0,watch.countIntervals());
 		watch.start();
 		assertTrue(watch.isRunning());
+		assertEquals(1,watch.countIntervals());
 	}
 
 	@Test
 	public void testStop() {
 		assertFalse(watch.isRunning());
+		assertEquals(0,watch.countIntervals());
 		watch.start();
 		assertTrue(watch.isRunning());
+		assertEquals(1,watch.countIntervals());
 		watch.stop();
+		assertEquals(1,watch.countIntervals());
 		assertFalse(watch.isRunning());
 	}
 
 	@Test
 	public void testStopStart() {
 		assertFalse(watch.isRunning());
+		assertEquals(0, watch.countIntervals());
 		watch.stopStart();
-		assertFalse(watch.isRunning());
+		assertEquals(1, watch.countIntervals());
+		assertTrue(watch.isRunning());
 		watch.start();
 		assertTrue(watch.isRunning());
 		watch.stopStart();
 		assertTrue(watch.isRunning());
-		assertEquals(1, watch.countIntervals());
-		watch.stopStart();
 		assertEquals(2, watch.countIntervals());
+		watch.stopStart();
+		assertEquals(3, watch.countIntervals());
 	}
 
 	@Test
@@ -64,44 +68,50 @@ public class StopwatchTest {
 		}
 		watch.stop();
 		assertEquals(1, watch.countIntervals());
-		assertTrue(Math.abs(watch.getLastNanos() - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
+		assertTrue(Math.abs(watch.getLastMillis() - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
+		watch.stopStart();
+		assertEquals(2, watch.countIntervals());
+		watch.stop();
+		assertEquals(2, watch.countIntervals());
 		assertFalse(watch.isRunning());
 		watch.clear();
 		assertEquals(0, watch.countIntervals());
-		assertEquals(0, watch.getLastNanos());
+		assertEquals(0, watch.getTotalMillis());
 		watch.start();
 		assertTrue(watch.isRunning());
+		assertEquals(1, watch.countIntervals());
 		watch.clear();
 		assertFalse(watch.isRunning());
+		assertEquals(0, watch.getTotalMillis());
 	}
 
 	@Test
-	public void testGetLastNanos() {
-		assertEquals(0, watch.getLastNanos());
+	public void testGetLastMillis() {
+		assertEquals(0, watch.getLastMillis());
 		watch.start();
 		try {
 			Thread.sleep(TEST_TIME_PERIOD_MILLIS);
 		} catch (InterruptedException e) {
 			fail("Interrupted");
 		}
-		long runningNanos = watch.getLastNanos();
+		long runningMillis = watch.getLastMillis();
 		watch.stop();
-		long stoppedNanos = watch.getLastNanos();
-		assertTrue(Math.abs(runningNanos - stoppedNanos) < NANO_BUFFER);
-		assertTrue(Math.abs(stoppedNanos - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
-		assertTrue(Math.abs(runningNanos - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
+		long stoppedMillis = watch.getLastMillis();
+		assertTrue(Math.abs(runningMillis - stoppedMillis) < MILLI_BUFFER);
+		assertTrue(Math.abs(stoppedMillis - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
+		assertTrue(Math.abs(runningMillis - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
 		watch.start();
 		try {
 			Thread.sleep(TEST_TIME_PERIOD_MILLIS);
 		} catch (InterruptedException e) {
 			fail("Interrupted");
 		}
-		runningNanos = watch.getLastNanos();
+		runningMillis = watch.getLastMillis();
 		watch.stop();
-		stoppedNanos = watch.getLastNanos();
-		assertTrue(Math.abs(runningNanos - stoppedNanos) < NANO_BUFFER);
-		assertTrue(Math.abs(stoppedNanos - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
-		assertTrue(Math.abs(runningNanos - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
+		stoppedMillis = watch.getLastMillis();
+		assertTrue(Math.abs(runningMillis - stoppedMillis) < MILLI_BUFFER);
+		assertTrue(Math.abs(stoppedMillis - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
+		assertTrue(Math.abs(runningMillis - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
 		watch.start();
 		try {
 			Thread.sleep(TEST_TIME_PERIOD_MILLIS);
@@ -114,30 +124,30 @@ public class StopwatchTest {
 		} catch (InterruptedException e) {
 			fail("Interrupted");
 		}
-		runningNanos = watch.getLastNanos();
+		runningMillis = watch.getLastMillis();
 		watch.stop();
-		stoppedNanos = watch.getLastNanos();
-		assertTrue(Math.abs(runningNanos - stoppedNanos) < NANO_BUFFER);
-		assertTrue(Math.abs(stoppedNanos - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
-		assertTrue(Math.abs(runningNanos - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
+		stoppedMillis = watch.getLastMillis();
+		assertTrue(Math.abs(runningMillis - stoppedMillis) < MILLI_BUFFER);
+		assertTrue(Math.abs(stoppedMillis - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
+		assertTrue(Math.abs(runningMillis - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
 	}
 
 	@Test
-	public void testGetTotalNanos() {
-		assertEquals(0, watch.getTotalNanos());
+	public void testGetTotalMillis() {
+		assertEquals(0, watch.getTotalMillis());
 		watch.start();
 		try {
 			Thread.sleep(TEST_TIME_PERIOD_MILLIS);
 		} catch (InterruptedException e) {
 			fail("Interrupted");
 		}
-		long runningNanos = watch.getTotalNanos();
+		long runningNanos = watch.getTotalMillis();
 		watch.stop();
-		long stoppedNanos = watch.getTotalNanos();
-		assertTrue(Math.abs(runningNanos - stoppedNanos) < NANO_BUFFER);
-		assertTrue(Math.abs(stoppedNanos - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
-		assertTrue(Math.abs(runningNanos - TEST_TIME_PERIOD_NANOS) < NANO_BUFFER);
-		assertEquals(watch.getTotalNanos(), watch.getLastNanos());
+		long stoppedNanos = watch.getTotalMillis();
+		assertTrue(Math.abs(runningNanos - stoppedNanos) < MILLI_BUFFER);
+		assertTrue(Math.abs(stoppedNanos - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
+		assertTrue(Math.abs(runningNanos - TEST_TIME_PERIOD_MILLIS) < MILLI_BUFFER);
+		assertEquals(watch.getTotalMillis(), watch.getLastMillis());
 		
 		watch.start();
 		try {
@@ -145,16 +155,16 @@ public class StopwatchTest {
 		} catch (InterruptedException e) {
 			fail("Interrupted");
 		}
-		assertTrue(Math.abs(watch.getTotalNanos() - (2 * TEST_TIME_PERIOD_NANOS)) < NANO_BUFFER);
+		assertTrue(Math.abs(watch.getTotalMillis() - (2 * TEST_TIME_PERIOD_MILLIS)) < MILLI_BUFFER);
 		watch.stopStart();
-		assertTrue(Math.abs(watch.getTotalNanos() - (2 * TEST_TIME_PERIOD_NANOS)) < NANO_BUFFER);
+		assertTrue(Math.abs(watch.getTotalMillis() - (2 * TEST_TIME_PERIOD_MILLIS)) < MILLI_BUFFER);
 		try {
 			Thread.sleep(TEST_TIME_PERIOD_MILLIS);
 		} catch (InterruptedException e) {
 			fail("Interrupted");
 		}
-		assertTrue(Math.abs(watch.getTotalNanos() - (3 * TEST_TIME_PERIOD_NANOS)) < NANO_BUFFER);
+		assertTrue(Math.abs(watch.getTotalMillis() - (3 * TEST_TIME_PERIOD_MILLIS)) < MILLI_BUFFER);
 		watch.stop();
-		assertTrue(Math.abs(watch.getTotalNanos() - (3 * TEST_TIME_PERIOD_NANOS)) < NANO_BUFFER);
+		assertTrue(Math.abs(watch.getTotalMillis() - (3 * TEST_TIME_PERIOD_MILLIS)) < MILLI_BUFFER);
 	}
 }
