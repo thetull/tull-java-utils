@@ -104,7 +104,13 @@ public class StringUtils {
 		return output;
 	}
 
-	
+	/**
+	 * This method removed the specified string from the beginning and the end of the base string, if it's present.
+	 * Otherwise, there is no change.
+	 * @param base The string to trim.
+	 * @param trim The string to trim from the beginning/end of the string.
+	 * @return The string with the characters trimmed from the beginning/end.
+	 */
 	public static String trim(String base, String trim){
 		return assureNotEndsWith(assureNotStartsWith(base, trim), trim);
 	}
