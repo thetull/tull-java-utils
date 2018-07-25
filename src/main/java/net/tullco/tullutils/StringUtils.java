@@ -85,9 +85,10 @@ public class StringUtils {
 	 * @return The base string not starting with the assure string.
 	 */
 	public static String assureNotStartsWith(String base, String assure){
-		if(base.startsWith(assure))
-			return base.substring(assure.length());
-		return base;
+		String output = base;
+		while(output.startsWith(assure))
+			output = output.substring(assure.length());
+		return output;
 	}
 	/**
 	 * This method assures that a string does not end with a given string. If the string doesn't end with it, then there is no change.
@@ -97,10 +98,23 @@ public class StringUtils {
 	 * @return The base string not ending with the assure string.
 	 */
 	public static String assureNotEndsWith(String base, String assure){
-		if(base.endsWith(assure))
-			return base.substring(0, base.length()-assure.length());
-		return base;
+		String output = base;
+		while(output.endsWith(assure))
+			output = output.substring(0, output.length()-assure.length());
+		return output;
 	}
+
+	/**
+	 * This method removed the specified string from the beginning and the end of the base string, if it's present.
+	 * Otherwise, there is no change.
+	 * @param base The string to trim.
+	 * @param trim The string to trim from the beginning/end of the string.
+	 * @return The string with the characters trimmed from the beginning/end.
+	 */
+	public static String trim(String base, String trim){
+		return assureNotEndsWith(assureNotStartsWith(base, trim), trim);
+	}
+	
 	/**
 	 * Adds the given character to the left of the given string until it reaches the requested length.
 	 * If the string is already as long as or longer than the padding, then it will be returned unchanged. 

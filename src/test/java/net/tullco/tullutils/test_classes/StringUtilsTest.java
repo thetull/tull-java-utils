@@ -53,13 +53,26 @@ public class StringUtilsTest {
 		String testString = "Late Night";
 		assertEquals("Late Night", StringUtils.assureNotStartsWith(testString, "Night"));
 		assertEquals("Night", StringUtils.assureNotStartsWith(testString, "Late "));
+		testString = "LateLate Night";
+		assertEquals(" Night", StringUtils.assureNotStartsWith(testString, "Late"));
 	}
 
 	@Test
 	public void testAssureNotEndsWith() {
 		String testString = "DayTime";
 		assertEquals("Day", StringUtils.assureNotEndsWith(testString, "Time"));
-		assertEquals("DayTime", StringUtils.assureNotEndsWith(testString, "ay"));
+		assertEquals("DayTime", StringUtils.assureNotEndsWith(testString, "Day"));
+		testString = "DayTimeTime";
+		assertEquals("Day", StringUtils.assureNotEndsWith(testString, "Time"));
+	}
+
+	@Test
+	public void testTrim(){
+		String testString = ",oops,";
+		assertEquals("oops", StringUtils.trim(testString, ","));
+		assertEquals(",oops,", StringUtils.trim(testString, "."));
+		testString = ",,oops,,,";
+		assertEquals("oops", StringUtils.trim(testString, ","));
 	}
 	
 	@Test
