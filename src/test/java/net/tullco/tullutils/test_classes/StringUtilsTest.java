@@ -56,7 +56,7 @@ public class StringUtilsTest {
 		testString = "LateLate Night";
 		assertEquals(" Night", StringUtils.assureNotStartsWith(testString, "Late"));
 	}
-	
+
 	@Test
 	public void testAssureNotEndsWith() {
 		String testString = "DayTime";
