@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.tullco</groupId>
   <artifactId>TullUtils</artifactId>
-  <version>0.17.0</version>
+  <version>0.17.1</version>
   <build>
     <plugins>
       <plugin>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>com.facebook.presto</groupId>
       <artifactId>presto-jdbc</artifactId>
-      <version>0.204</version>
+      <version>0.213</version>
     </dependency>
   </dependencies>
 </project>
