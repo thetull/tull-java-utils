@@ -44,4 +44,63 @@ public class ListUtilsTest {
 		assertEquals("oops",list1.get(0));
 		assertEquals("fun",list1.get(1));
 	}
+	
+	
+	@Test
+	public void testIntersect(){
+		List<String> numListOutput = ListUtils.intersect(list1, list2);
+		assertEquals(1, numListOutput.size());
+		assertEquals("oops", numListOutput.get(0));
+		
+
+		numListOutput = ListUtils.intersect(list2, list1);
+		assertEquals(1, numListOutput.size());
+		assertEquals("oops", numListOutput.get(0));
+	}
+	
+	@Test
+	public void testExcept(){
+		List<String> numListOutput = ListUtils.except(list1, list2);
+		assertEquals(1, numListOutput.size());
+		assertEquals("lol", numListOutput.get(0));
+		
+
+		numListOutput = ListUtils.except(list2, list1);
+		assertEquals(1, numListOutput.size());
+		assertEquals("fun", numListOutput.get(0));
+	}
+	
+	@Test
+	public void testUnion(){
+		List<String> numListOutput = ListUtils.union(list1, list2);
+		assertEquals(3, numListOutput.size());
+		assertEquals("oops", numListOutput.get(0));
+		assertEquals("lol", numListOutput.get(1));
+		assertEquals("fun", numListOutput.get(2));
+		
+
+		numListOutput = ListUtils.union(list2, list1);
+		assertEquals(3, numListOutput.size());
+		assertEquals("oops", numListOutput.get(0));
+		assertEquals("fun", numListOutput.get(1));
+		assertEquals("lol", numListOutput.get(2));
+	}
+	
+	@Test
+	public void testConcat(){
+		List<String> numListOutput = ListUtils.concatenate(list1, list2);
+		assertEquals(4, numListOutput.size());
+		assertEquals("oops", numListOutput.get(0));
+		assertEquals("lol", numListOutput.get(1));
+		assertEquals("oops", numListOutput.get(2));
+		assertEquals("fun", numListOutput.get(3));
+		
+
+		numListOutput = ListUtils.concatenate(list2, list1);
+		assertEquals(4, numListOutput.size());
+		assertEquals("oops", numListOutput.get(0));
+		assertEquals("fun", numListOutput.get(1));
+		assertEquals("oops", numListOutput.get(2));
+		assertEquals("lol", numListOutput.get(3));
+	}
 }
