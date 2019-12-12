@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvValidationException;
 
 import net.tullco.tullutils.FileUtils;
 import net.tullco.tullutils.test_utils.TestResourceLoader;
@@ -86,7 +87,7 @@ public class FileUtilsTest {
 		reader.close();
 	}
 	@Test
-	public void csvReaderTest() throws IOException {
+	public void csvReaderTest() throws IOException, CsvValidationException {
 		File f = TestResourceLoader.getResource("csv/FileTest1.csv");
 		CSVReader reader = FileUtils.getCSVReader(f);
 		String[] line = reader.readNext();
@@ -101,7 +102,7 @@ public class FileUtilsTest {
 		assertTrue(Arrays.equals(expected, line));
 	}
 	@Test
-	public void csvWriterTest() throws IOException {
+	public void csvWriterTest() throws IOException, CsvValidationException {
 		File f = File.createTempFile("tullfile_test", ".txt");
 		String[] output = {"lol","olo"};
 		CSVWriter writer = FileUtils.getCSVWriter(f);
