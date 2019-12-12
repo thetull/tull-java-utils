@@ -134,7 +134,7 @@ public class SQLUtil implements Closeable {
 			System.out.println("Running "+currentStart+" to "+currentEnd+".");
 			if(separateFiles){
 				f.mkdir();
-				File chunk = new File(f.getAbsolutePath()+"/"+currentStart+"-"+currentEnd+".csv");
+				File chunk = new File(f, currentStart+"-"+currentEnd+".csv");
 				getResultsAsCSV(chunk,chunkedStatement);
 			}else{
 				if(minId==currentStart){
