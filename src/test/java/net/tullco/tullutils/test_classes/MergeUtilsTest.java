@@ -9,6 +9,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 
 import net.tullco.tullutils.FileUtils;
 import net.tullco.tullutils.MergeUtils;
@@ -17,7 +18,7 @@ import net.tullco.tullutils.test_utils.TestResourceLoader;
 public class MergeUtilsTest {
 
 	@Test
-	public void testMergeFilesFileFileIntInt() throws IOException {
+	public void testMergeFilesFileFileIntInt() throws IOException, CsvValidationException {
 		File f1 = TestResourceLoader.getResource("csv/MergeTest1.csv");
 		File f2 = TestResourceLoader.getResource("csv/MergeTest2.csv");
 		File temp = MergeUtils.mergeFiles(f2, f1, 0, 0);
@@ -34,7 +35,7 @@ public class MergeUtilsTest {
 	}
 
 	@Test
-	public void testMergeFilesFileFileIntIntFile() throws IOException {
+	public void testMergeFilesFileFileIntIntFile() throws IOException, CsvValidationException {
 		File f1 = TestResourceLoader.getResource("csv/MergeTest1.csv");
 		File f2 = TestResourceLoader.getResource("csv/MergeTest2.csv");
 		File temp = File.createTempFile("tullfile_test", "csv");
@@ -52,7 +53,7 @@ public class MergeUtilsTest {
 	}
 
 	@Test
-	public void testMergeFilesSlow() throws IOException {
+	public void testMergeFilesSlow() throws IOException, CsvValidationException {
 		File f1 = TestResourceLoader.getResource("csv/MergeTest1.csv");
 		File f2 = TestResourceLoader.getResource("csv/MergeTest2.csv");
 		File temp = File.createTempFile("tullfile_test", "csv");

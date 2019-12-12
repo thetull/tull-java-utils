@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvValidationException;
 
 public class MergeUtils {
 	
@@ -22,8 +23,9 @@ public class MergeUtils {
 	 * @param baseKeyIndex The index of the merge key in base file.
 	 * @return The file with the merged information. This will be a temp file, so you should copy the results out if you want it to persist.
 	 * @throws IOException If there was a problem writing the merged file.
+	 * @throws CsvValidationException 
 	 */
-	public static File mergeFiles(File supplement, File base, int supplementKeyIndex, int baseKeyIndex) throws IOException{
+	public static File mergeFiles(File supplement, File base, int supplementKeyIndex, int baseKeyIndex) throws IOException, CsvValidationException{
 		File output = File.createTempFile("data_merge", ".csv");
 		mergeFiles(supplement, base, supplementKeyIndex, baseKeyIndex, output);
 		return output;
@@ -40,8 +42,9 @@ public class MergeUtils {
 	 * @param baseKeyIndex The index of the merge key in base file.
 	 * @param destination The output file for the merged data
 	 * @throws IOException If there was a problem writing the merged file.
+	 * @throws CsvValidationException 
 	 */
-	public static void mergeFiles(File supplementCsv, File baseCsv, int supplementKeyIndex, int baseKeyIndex, File destination) throws IOException{
+	public static void mergeFiles(File supplementCsv, File baseCsv, int supplementKeyIndex, int baseKeyIndex, File destination) throws IOException, CsvValidationException{
 		//First, load the small file into memory.
 		CSVReader smallReader = FileUtils.getCSVReader(supplementCsv);
 		String[] smallHeaders = removeItemFromStringArray(smallReader.readNext(),supplementKeyIndex);
@@ -83,8 +86,9 @@ public class MergeUtils {
 	 * @param baseKeyIndex The index of the merge key in base file.
 	 * @param destination The output file for the merged data
 	 * @throws IOException If there was a problem writing the merged file.
+	 * @throws CsvValidationException 
 	 */
-	public static void mergeFilesSlow(File supplementCsv, File baseCsv, int supplementKeyIndex, int baseKeyIndex, File destination) throws IOException {
+	public static void mergeFilesSlow(File supplementCsv, File baseCsv, int supplementKeyIndex, int baseKeyIndex, File destination) throws IOException, CsvValidationException {
 		CSVReader baseReader = FileUtils.getCSVReader(baseCsv);
 		String[] baseHeaders = baseReader.readNext();
 		CSVReader supplementReader = FileUtils.getCSVReader(supplementCsv);
