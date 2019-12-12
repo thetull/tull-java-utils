@@ -39,6 +39,7 @@ public class SQLUtil implements Closeable {
 	public ResultSet executeSelect(String statement) throws SQLException{
 		throwIfClosed();
 		Statement s = this.conn.createStatement();
+		s.setFetchSize(5000);
 		return s.executeQuery(statement);
 	}
 
@@ -235,7 +236,7 @@ public class SQLUtil implements Closeable {
 						rowData[i-1] = rs.getTimestamp(i).toLocalDateTime().toString();
 					}
 					else{
-						throw new SQLException("CSV Method does not support the data type "+rsmd.getColumnTypeName(i)+".");
+						rowData[i-1] = rs.getObject(i).toString();
 					}
 					if(rs.wasNull())
 						rowData[i-1] = "";
