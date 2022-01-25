@@ -10,7 +10,7 @@ import net.tullco.tullutils.Stopwatch;
 public class StopwatchTest {
 
 	private static final long TEST_TIME_PERIOD_MILLIS = 100L;
-	private static final long MILLI_BUFFER = 2L;
+	private static final long MILLI_BUFFER = 100L;
 	
 	private Stopwatch watch;
 	
