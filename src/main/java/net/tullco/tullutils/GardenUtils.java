@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -107,6 +108,17 @@ public final class GardenUtils {
 				,trustStoreLocation
 				,trustStorePassword);
 		Connection c = DriverManager.getConnection(jdbcURL);
+		return c;
+	}
+	
+	public final static Connection getDremioConnection() throws UnconfiguredException, IOException, SQLException{
+		String jdbcURL = String.format("jdbc:dremio:zk=%s;ssl"
+				,Configuration.getConfiguration("DREMIO_ZK_QUORUM")
+				);
+        Properties props = new Properties();
+        props.setProperty("user",Configuration.getConfiguration("DREMIO_USERNAME"));
+        props.setProperty("password",Configuration.getConfiguration("DREMIO_PAT"));
+		Connection c = DriverManager.getConnection(jdbcURL, props);
 		return c;
 	}
 }
