@@ -1,11 +1,17 @@
 package net.tullco.tullutils.lookerutils;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import net.tullco.tullutils.Configuration;
+import net.tullco.tullutils.FileUtils;
+import net.tullco.tullutils.NetworkUtils;
+import net.tullco.tullutils.Pair;
 import net.tullco.tullutils.exceptions.LookerException;
 import net.tullco.tullutils.exceptions.UnconfiguredException;
 
@@ -73,6 +79,37 @@ public class Looker implements Closeable {
 		this.queries = new ArrayList<Query>();
 		this.getAccessToken();
 	}
+	/**
+	 * Runs a query on the given connection, and writes it out to the given file.
+	 * @param query The query to run.
+	 * @param connection The name of the connection to run the query on.
+	 * @param outputLocation A file containing the outputs.
+	 * @throws LookerException Thrown if anything goes wrong with the connection to Looker.
+	 * @throws IOException Thrown if there is a problem writing the output file.
+	 */
+	public void writeSqlRunnerQueryToFile(String query, String connection, File outputLocation) throws LookerException, IOException{
+		throwIfClosed();
+		String url = String.format("%s%s", this.endpointLocation, "sql_queries");
+		JSONObject payload = new JSONObject();
+		payload.put("connection_name", connection);
+		payload.put("sql", query);
+		String result;
+		try {
+			result = NetworkUtils.sendDataToURL(url, true, NetworkUtils.POST, payload.toString(), Pair.<String,String>of("Authorization", "Bearer "+ this.getAccessToken()));
+		} catch (IOException e) {
+			throw new LookerException(e);
+		}
+		JSONObject json = new JSONObject(result);
+		String slug = json.getString("slug");
+		url = String.format("%s%s/%s/run/csv", this.endpointLocation, "sql_queries", slug);
+		try{
+			result = NetworkUtils.getDataFromURL(url, true, NetworkUtils.POST, Pair.<String,String>of("Authorization", "Bearer "+ this.getAccessToken()));
+		} catch (IOException e) {
+			throw new LookerException(e);
+		}
+		FileUtils.writeStringToFile(result, outputLocation);
+	}
+	
 	/**
 	 * Gets a new, empty query against the looker API defined by the object.
 	 * @return A new, empty query.
