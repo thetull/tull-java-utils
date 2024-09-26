@@ -112,9 +112,8 @@ public final class GardenUtils {
 	}
 	
 	public final static Connection getDremioConnection() throws UnconfiguredException, IOException, SQLException{
-		String jdbcURL = String.format("jdbc:dremio:zk=%s;ssl"
-				,Configuration.getConfiguration("DREMIO_ZK_QUORUM")
-				);
+		String jdbcURL = String.format("jdbc:dremio:direct=%s;ssl=true"
+				,Configuration.getConfiguration("DREMIO_PROD_JDBC_URL"));
         Properties props = new Properties();
         props.setProperty("user",Configuration.getConfiguration("DREMIO_USERNAME"));
         props.setProperty("password",Configuration.getConfiguration("DREMIO_PAT"));
